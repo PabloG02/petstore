@@ -1,18 +1,61 @@
 [versions]
+# Jakarta / EE
 jakarta-ee = "10.0.0"
+
+# Testing
 junit = "5.13.1"
 hamcrest = "3.0"
+dbunit = "3.0.0"
+
+# Arquillian / Containers
+arquillian-core = "1.10.0.Final"
+arquillian-jakarta = "10.0.0.Final"
+wildfly-arquillian = "5.1.0.Final"
+
+# ShrinkWrap
+shrinkwrap = "1.2.6"
+shrinkwrap-resolver = "3.3.4"
+
+# Build tooling
+gradle-tooling = "9.1.0"
+
+# Utilities
 commons-lang = "3.20.0"
 
 [libraries]
+# BOMs
 jakarta-bom = { module = "jakarta.platform:jakarta.jakartaee-bom", version.ref = "jakarta-ee" }
-
-jakarta-persistence-api = { module = "jakarta.persistence:jakarta.persistence-api" }
-
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
+arquillian-bom = { module = "org.jboss.arquillian:arquillian-bom", version.ref = "arquillian-core" }
+arquillian-jakarta-bom = { module = "org.jboss.arquillian.jakarta:arquillian-jakarta-bom", version.ref = "arquillian-jakarta" }
+wildfly-arquillian-bom = { module = "org.wildfly.arquillian:wildfly-arquillian-bom", version.ref = "wildfly-arquillian" }
+shrinkwrap-resolver-bom = { module = "org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-bom", version.ref = "shrinkwrap-resolver" }
+
+# Jakarta APIs
+jakarta-persistence-api = { module = "jakarta.persistence:jakarta.persistence-api" }
+jakarta-ejb-api = { module = "jakarta.ejb:jakarta.ejb-api" }
+jakarta-inject-api = { module = "jakarta.inject:jakarta.inject-api" }
+jakarta-transaction-api = { module = "jakarta.transaction:jakarta.transaction-api" }
+jakarta-annotation-api = { module = "jakarta.annotation:jakarta.annotation-api" }
+jakarta-cdi-api = { module = "jakarta.enterprise:jakarta.enterprise.cdi-api" }
+
+# Testing
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
-
 hamcrest = { module = "org.hamcrest:hamcrest", version.ref = "hamcrest" }
+dbunit = { module = "org.dbunit:dbunit", version.ref = "dbunit" }
 
+# Arquillian
+arquillian-junit5-container = { module = "org.jboss.arquillian.junit5:arquillian-junit5-container" }
+wildfly-arquillian-container-managed = { module = "org.wildfly.arquillian:wildfly-arquillian-container-managed" }
+
+# ShrinkWrap
+shrinkwrap-api = { module = "org.jboss.shrinkwrap:shrinkwrap-api", version.ref = "shrinkwrap" }
+shrinkwrap-impl = { module = "org.jboss.shrinkwrap:shrinkwrap-impl-base", version.ref = "shrinkwrap" }
+shrinkwrap-resolver = { module = "org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-gradle-depchain" }
+
+# Build tooling
+gradle-tooling-api = { group = "org.gradle", name = "gradle-tooling-api", version.ref = "gradle-tooling" }
+
+# Utilities
 commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commons-lang" }

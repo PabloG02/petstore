@@ -14,6 +14,7 @@ import static org.apache.commons.lang3.Validate.inclusiveBetween;
 import static org.apache.commons.lang3.Validate.matchesPattern;
 
 @Entity
+@Table(name = "users")
 @Inheritance
 @DiscriminatorColumn(
         name = "role",

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+    <users login="jose" password="A3F6F4B40B24E2FD61F08923ED452F34" role="ADMIN"/>
+    <users login="pepe" password="B43B4D046860B2BD945BCA2597BF9F07" role="OWNER"/>
+    <users login="juan" password="B4FBB95580592697DC71488A1F19277E" role="OWNER"/>
+    <users login="ana" password="22BEEAE33E9B2657F9610621502CD7A4" role="OWNER"/>
+    <users login="lorena" password="05009E420932C21E5A68F5EF1AADD530" role="OWNER"/>
+    
+    <pets id="1" name="Pepecat" animal="CAT" birth="2000-01-01 01:01:01" owner="pepe"/>
+    <pets id="2" name="Max" animal="CAT" birth="2000-01-01 01:01:01" owner="juan"/>
+    <pets id="3" name="Juandog" animal="DOG" birth="2000-01-01 01:01:01" owner="juan"/>
+    <pets id="4" name="Anacat" animal="CAT" birth="2000-01-01 01:01:01" owner="ana"/>
+    <pets id="5" name="Max" animal="DOG" birth="2000-01-01 01:01:01" owner="ana"/>
+    <pets id="6" name="Anabird" animal="BIRD" birth="2000-01-01 01:01:01" owner="ana"/>
+</dataset>

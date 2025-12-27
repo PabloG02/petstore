@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+    <users login="jacinto" password="69ED0B54C2B179E20F784370EAE8CB46" role="OWNER" />
+    
+    <pets id="7" name="Jacintocat" animal="CAT" birth="2000-01-01 01:01:01" owner="jacinto"/>
+    <pets id="8" name="Jacintodo" animal="DOG" birth="2000-01-01 01:01:01" owner="jacinto"/>
+    <pets id="9" name="Jacintobird" animal="BIRD" birth="2000-01-01 01:01:01" owner="jacinto"/>
+</dataset>

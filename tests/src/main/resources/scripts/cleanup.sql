@@ -1,0 +1,2 @@
+DELETE FROM pets;
+DELETE FROM users;

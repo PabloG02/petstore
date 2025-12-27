@@ -14,7 +14,8 @@ import static org.apache.commons.lang3.Validate.inclusiveBetween;
  *
  * @author Miguel Reboiro-Jato
  */
-@Entity(name = "Pet")
+@Entity
+@Table(name = "pets")
 public class Pet implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

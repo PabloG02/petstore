@@ -1,14 +1,12 @@
 dependencies {
     implementation(project(":domain"))
-    implementation(project(":service"))
-    implementation(project(":rest"))
-    implementation(project(":jsf"))
 
-    testImplementation(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter)
-    testRuntimeOnly(libs.junit.platform.launcher)
-}
+    compileOnly(platform(libs.jakarta.bom))
+    compileOnly(libs.jakarta.ejb.api)
+    compileOnly(libs.jakarta.inject.api)
+    compileOnly(libs.jakarta.annotation.api)
+    compileOnly(libs.jakarta.cdi.api)
 
-tasks.test {
-    useJUnitPlatform()
+    implementation(libs.hamcrest)
+    implementation(libs.dbunit)
 }
