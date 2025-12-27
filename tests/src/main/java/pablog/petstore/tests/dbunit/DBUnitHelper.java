@@ -27,6 +27,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
@@ -90,6 +92,8 @@ public class DBUnitHelper {
     /**
      * Loads dataset files using CLEAN_INSERT operation.
      * This clears the tables involved and inserts the dataset data.
+     * After loading, identity columns are restarted to MAX(column)+1 to avoid
+     * collisions when Hibernate generates new IDs.
      *
      * @param datasetFiles Dataset file names (relative to datasets/ directory)
      * @throws DatabaseUnitException if dataset loading fails
@@ -107,11 +111,93 @@ public class DBUnitHelper {
             connection = getConnection();
             IDataSet dataSet = buildDataSet(datasetFiles);
             DatabaseOperation.CLEAN_INSERT.execute(connection, dataSet);
+            
+            // Restart identity columns for all tables in the dataset
+            restartIdentityColumns(connection, dataSet);
+            
             LOGGER.fine("Dataset loaded successfully");
         } catch (SQLException e) {
             throw new DatabaseUnitException("Failed to load dataset", e);
         } finally {
             closeConnection(connection);
+        }
+    }
+
+    /**
+     * Restarts identity columns for all tables in the dataset.
+     * Queries INFORMATION_SCHEMA to find identity columns and resets each one
+     * to MAX(column)+1 to avoid primary key collisions with auto-generated values.
+     *
+     * @param connection the database connection
+     * @param dataSet the dataset that was loaded
+     */
+    private void restartIdentityColumns(IDatabaseConnection connection, IDataSet dataSet) {
+        try {
+            Connection jdbcConnection = connection.getConnection();
+            
+            // Query H2's INFORMATION_SCHEMA to find all identity columns in the schema
+            String identityQuery = 
+                "SELECT TABLE_NAME, COLUMN_NAME " +
+                "FROM INFORMATION_SCHEMA.COLUMNS " +
+                "WHERE TABLE_SCHEMA = ? AND IS_IDENTITY = 'YES'";
+            
+            try (PreparedStatement ps = jdbcConnection.prepareStatement(identityQuery)) {
+                ps.setString(1, schema);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        String table = rs.getString("TABLE_NAME");
+                        String column = rs.getString("COLUMN_NAME");
+                        
+                        // Only restart if the table was in our dataset
+                        if (isTableInDataSet(dataSet, table)) {
+                            restartIdentityFromMax(jdbcConnection, table, column);
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.WARNING, "Could not query identity columns from INFORMATION_SCHEMA", e);
+        }
+    }
+
+    /**
+     * Checks if a table exists in the dataset.
+     */
+    private boolean isTableInDataSet(IDataSet dataSet, String tableName) {
+        try {
+            String[] tableNames = dataSet.getTableNames();
+            for (String name : tableNames) {
+                if (name.equalsIgnoreCase(tableName)) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.FINE, "Error checking dataset tables", e);
+        }
+        return false;
+    }
+
+    /**
+     * Restarts an identity column to MAX(column)+1 to avoid collisions after DBUnit inserts.
+     * This ensures that when Hibernate generates new IDs, they won't conflict with 
+     * explicitly inserted test data.
+     *
+     * @param connection the JDBC connection
+     * @param table the table name
+     * @param column the identity column name
+     */
+    private void restartIdentityFromMax(Connection connection, String table, String column) {
+        String maxQuery = "SELECT COALESCE(MAX(" + column + "), 0) + 1 FROM " + table;
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(maxQuery)) {
+            if (rs.next()) {
+                long nextValue = rs.getLong(1);
+                String restartSql = "ALTER TABLE " + table + " ALTER COLUMN " + column + " RESTART WITH " + nextValue;
+                stmt.execute(restartSql);
+                LOGGER.fine(() -> "Restarted identity " + table + "." + column + " to " + nextValue);
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.WARNING, "Could not restart identity for " + table + "." + column, e);
         }
     }
 
