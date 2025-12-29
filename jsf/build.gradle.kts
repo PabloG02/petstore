@@ -1,5 +1,5 @@
 plugins {
-    id("war")
+    war
 }
 
 dependencies {
