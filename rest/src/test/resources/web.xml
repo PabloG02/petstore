@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+
+    <display-name>Pet Store REST</display-name>
+
+    <servlet>
+        <servlet-name>RestApplication</servlet-name>
+        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+        <init-param>
+            <param-name>jakarta.ws.rs.Application</param-name>
+            <param-value>pablog.petstore.rest.PetStoreApplication</param-value>
+        </init-param>
+        <init-param>
+            <param-name>resteasy.servlet.mapping.prefix</param-name>
+            <param-value>/api</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RestApplication</servlet-name>
+        <url-pattern>/api/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- Security constraints -->
+
+<!--    <security-constraint>-->
+<!--        <web-resource-collection>-->
+<!--            <web-resource-name>admin</web-resource-name>-->
+<!--            <url-pattern>/api/owners/*</url-pattern>-->
+<!--            <http-method-omission>OPTIONS</http-method-omission>-->
+<!--        </web-resource-collection>-->
+<!--        <auth-constraint>-->
+<!--            <role-name>ADMIN</role-name>-->
+<!--        </auth-constraint>-->
+<!--    </security-constraint>-->
+
+<!--    <security-constraint>-->
+<!--        <web-resource-collection>-->
+<!--            <web-resource-name>owner</web-resource-name>-->
+<!--            <url-pattern>/api/pets/*</url-pattern>-->
+<!--            <http-method-omission>OPTIONS</http-method-omission>-->
+<!--        </web-resource-collection>-->
+<!--        <auth-constraint>-->
+<!--            <role-name>OWNER</role-name>-->
+<!--        </auth-constraint>-->
+<!--    </security-constraint>-->
+
+<!--    &lt;!&ndash; Security roles &ndash;&gt;-->
+
+<!--    <security-role>-->
+<!--        <role-name>ADMIN</role-name>-->
+<!--    </security-role>-->
+
+<!--    <security-role>-->
+<!--        <role-name>OWNER</role-name>-->
+<!--    </security-role>-->
+
+<!--    &lt;!&ndash; Login configuration &ndash;&gt;-->
+
+<!--    <login-config>-->
+<!--        <auth-method>BASIC</auth-method>-->
+<!--        <realm-name>default</realm-name>-->
+<!--    </login-config>-->
+
+</web-app>

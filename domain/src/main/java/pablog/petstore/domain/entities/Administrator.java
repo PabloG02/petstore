@@ -19,6 +19,7 @@ public class Administrator extends User implements Serializable {
 
     // Required for JPA
     protected Administrator() {
+        this.role = "ADMIN";
     }
 
     /**

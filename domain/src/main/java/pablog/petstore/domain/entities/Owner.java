@@ -29,10 +29,11 @@ public class Owner extends User implements Serializable {
             orphanRemoval = true,
             fetch = FetchType.EAGER
     )
-    private Set<Pet> pets;
+    private Set<Pet> pets = new HashSet<>();
 
     // Required for JPA
     protected Owner() {
+        this.role = "OWNER";
     }
 
     /**
@@ -81,6 +82,14 @@ public class Owner extends User implements Serializable {
      */
     public Collection<Pet> getPets() {
         return unmodifiableCollection(pets);
+    }
+
+    /** Setter used by JSON-B when deserializing REST responses. */
+    public void setPets(Collection<Pet> pets) {
+        this.pets.clear();
+        if (pets != null) {
+            pets.forEach(this::internalAddPet);
+        }
     }
 
     /**

@@ -1,6 +1,7 @@
 dependencies {
     compileOnly(platform(libs.jakarta.bom))
     compileOnly(libs.jakarta.persistence.api)
+    compileOnly(libs.jakarta.jsonb.api)
 
     implementation(libs.commons.lang3)
 

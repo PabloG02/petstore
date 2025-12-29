@@ -1,5 +1,6 @@
 package pablog.petstore.domain.entities;
 
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
 
 import java.io.Serial;
@@ -37,6 +38,7 @@ public class Pet implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "owner", referencedColumnName = "login", nullable = false)
+    @JsonbTransient
     private Owner owner;
 
     // Required for JPA.

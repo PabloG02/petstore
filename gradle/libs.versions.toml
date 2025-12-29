@@ -6,6 +6,7 @@ jakarta-ee = "10.0.0"
 junit = "5.13.1"
 hamcrest = "3.0"
 dbunit = "3.0.0"
+mockito = "5.18.0"
 
 # Arquillian / Containers
 arquillian-core = "1.10.0.Final"
@@ -15,6 +16,7 @@ wildfly-arquillian = "5.1.0.Final"
 # ShrinkWrap
 shrinkwrap = "1.2.6"
 shrinkwrap-resolver = "3.3.4"
+resteasy = "6.2.15.Final"
 
 # Build tooling
 gradle-tooling = "9.1.0"
@@ -38,12 +40,15 @@ jakarta-inject-api = { module = "jakarta.inject:jakarta.inject-api" }
 jakarta-transaction-api = { module = "jakarta.transaction:jakarta.transaction-api" }
 jakarta-annotation-api = { module = "jakarta.annotation:jakarta.annotation-api" }
 jakarta-cdi-api = { module = "jakarta.enterprise:jakarta.enterprise.cdi-api" }
+jakarta-ws-rs-api = { module = "jakarta.ws.rs:jakarta.ws.rs-api" }
+jakarta-jsonb-api = { module = "jakarta.json.bind:jakarta.json.bind-api" }
 
 # Testing
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 hamcrest = { module = "org.hamcrest:hamcrest", version.ref = "hamcrest" }
 dbunit = { module = "org.dbunit:dbunit", version.ref = "dbunit" }
+mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
 
 # Arquillian
 arquillian-junit5-container = { module = "org.jboss.arquillian.junit5:arquillian-junit5-container" }
@@ -53,6 +58,10 @@ wildfly-arquillian-container-managed = { module = "org.wildfly.arquillian:wildfl
 shrinkwrap-api = { module = "org.jboss.shrinkwrap:shrinkwrap-api", version.ref = "shrinkwrap" }
 shrinkwrap-impl = { module = "org.jboss.shrinkwrap:shrinkwrap-impl-base", version.ref = "shrinkwrap" }
 shrinkwrap-resolver = { module = "org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-gradle-depchain" }
+
+# RESTEasy (Jakarta RESTful Web Services Implementation)
+resteasy-client = { module = "org.jboss.resteasy:resteasy-client", version.ref = "resteasy" }
+resteasy-jsonb-provider = { module = "org.jboss.resteasy:resteasy-json-binding-provider", version.ref = "resteasy" }
 
 # Build tooling
 gradle-tooling-api = { group = "org.gradle", name = "gradle-tooling-api", version.ref = "gradle-tooling" }
