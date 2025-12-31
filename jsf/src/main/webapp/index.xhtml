@@ -1,0 +1,156 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/templates/template.xhtml">
+
+    <ui:define name="content">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-grid">
+                <!-- Text Content -->
+                <div class="fade-in-up">
+                    <div class="pill-badge">
+                        <span class="pill-dot"></span>
+                        New: Vaccine Tracking Module Coming Soon
+                    </div>
+
+                    <h1 class="hero-title">
+                        Manage your furry friends with <span class="hero-highlight">confidence.</span>
+                    </h1>
+
+                    <p class="hero-desc">
+                        The complete administrative dashboard for pet stores and clinics. Manage owners, track pet inventories, and handle veterinary records in one secure place.
+                    </p>
+
+                    <div class="hero-buttons">
+                        <h:panelGroup rendered="#{empty request.remoteUser}">
+                            <h:link outcome="/login" styleClass="btn-primary">
+                                Access Dashboard
+                                <i data-lucide="arrow-right" class="icon-20"></i>
+                            </h:link>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{not empty request.remoteUser}">
+                            <h:link outcome="#{request.isUserInRole('ADMIN') ? '/owners' : '/pets'}" styleClass="btn-primary">
+                                Go to Dashboard
+                                <i data-lucide="layout-dashboard" class="icon-20"></i>
+                            </h:link>
+                        </h:panelGroup>
+                    </div>
+                </div>
+
+                <!-- Visual / Mock Dashboard -->
+                <div class="fade-in-up delay-200">
+                    <!-- Card Interface -->
+                    <div class="hero-dashboard-card">
+                        <div class="hero-mock-header">
+                            <div class="mock-dot mock-dot-red"></div>
+                            <div class="mock-dot mock-dot-amber"></div>
+                            <div class="mock-dot mock-dot-green"></div>
+                            <div class="mock-path">dashboard/pets.xhtml</div>
+                        </div>
+
+                        <div class="mock-table">
+                            <div class="mock-table-header">
+                                <h3 class="mock-heading">Recent Pets</h3>
+                                <span class="mock-pill mock-pill-primary">+ Add New</span>
+                            </div>
+
+                            <div class="mock-row">
+                                <div class="mock-row-info">
+                                    <div class="mock-avatar avatar-orange">
+                                        <i data-lucide="cat" class="icon-20"></i>
+                                    </div>
+                                    <div>
+                                        <div class="mock-name">Luna</div>
+                                        <div class="mock-desc">Persian Cat</div>
+                                    </div>
+                                </div>
+                                <span class="mock-pill mock-pill-success">Healthy</span>
+                            </div>
+
+                            <div class="mock-row">
+                                <div class="mock-row-info">
+                                    <div class="mock-avatar avatar-blue">
+                                        <i data-lucide="dog" class="icon-20"></i>
+                                    </div>
+                                    <div>
+                                        <div class="mock-name">Max</div>
+                                        <div class="mock-desc">Golden Retriever</div>
+                                    </div>
+                                </div>
+                                <span class="mock-pill mock-pill-warn">Checkup</span>
+                            </div>
+
+                            <div class="mock-row">
+                                <div class="mock-row-info">
+                                    <div class="mock-avatar avatar-purple">
+                                        <i data-lucide="bird" class="icon-20"></i>
+                                    </div>
+                                    <div>
+                                        <div class="mock-name">Kiwi</div>
+                                        <div class="mock-desc">Parrot</div>
+                                    </div>
+                                </div>
+                                <span class="mock-pill mock-pill-success">Healthy</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section Header -->
+        <section>
+            <div class="section-header">
+                <div class="section-subtitle">Core Features</div>
+                <div class="section-title">Everything you need to run your store</div>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="features-grid">
+                <!-- Card 1 -->
+                <div class="feature-card">
+                    <div class="icon-box icon-blue">
+                        <i data-lucide="users" class="icon-24"></i>
+                    </div>
+                    <h4 class="feature-title">Owner Management</h4>
+                    <p class="feature-desc">
+                        Complete CRUD capabilities for user accounts. Register new owners, update contact details, and manage permissions from a central admin table.
+                    </p>
+                    <div class="feature-footnote">
+                        <span class="feature-footnote-text">Ref: owners.xhtml</span>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="feature-card">
+                    <div class="icon-box icon-teal">
+                        <i data-lucide="cat" class="icon-24"></i>
+                    </div>
+                    <h4 class="feature-title">Pet Inventory</h4>
+                    <p class="feature-desc">
+                        Track every animal in your care. Log names, birth dates, types, and health status. Filter and search through your database instantly.
+                    </p>
+                    <div class="feature-footnote">
+                        <span class="feature-footnote-text">Ref: pets.xhtml</span>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="feature-card">
+                    <div class="icon-box icon-purple">
+                        <i data-lucide="activity" class="icon-24"></i>
+                    </div>
+                    <h4 class="feature-title">Health &amp; Vets</h4>
+                    <p class="feature-desc">
+                        Coming soon: A dedicated module for tracking vaccinations, vet appointments, and medical history logs for each pet.
+                    </p>
+                    <div class="feature-footnote">
+                        <span class="feature-footnote-text">Ref: vaccines.xhtml</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </ui:define>
+
+</ui:composition>

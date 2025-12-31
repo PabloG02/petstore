@@ -1,0 +1,51 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/templates/template.xhtml">
+
+    <ui:define name="content">
+        <section class="auth-container">
+            <div class="form-card fade-in-up">
+                <div class="auth-header">
+                    <div class="auth-icon">
+                        <i data-lucide="lock"></i>
+                    </div>
+
+                    <h2 class="auth-title">Sign In</h2>
+                    <p class="auth-subtitle">
+                        Enter your credentials to access the dashboard
+                    </p>
+                </div>
+
+                <h:messages globalOnly="true" styleClass="alert-error"/>
+
+                <h:form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label" for="username">Username</label>
+                        <h:inputText id="username"
+                                     value="#{loginManagedBean.username}"
+                                     required="true"
+                                     requiredMessage="Username is required"
+                                     styleClass="form-input"/>
+
+                        <h:message for="username" styleClass="form-error"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="password">Password</label>
+                        <h:inputSecret id="password"
+                                       value="#{loginManagedBean.password}"
+                                       required="true"
+                                       requiredMessage="Password is required"
+                                       styleClass="form-input"/>
+
+                        <h:message for="password" styleClass="form-error"/>
+                    </div>
+
+                    <h:commandButton action="#{loginManagedBean.login}" value="Sign In" styleClass="btn-primary btn-full"/>
+                </h:form>
+            </div>
+        </section>
+    </ui:define>
+
+</ui:composition>

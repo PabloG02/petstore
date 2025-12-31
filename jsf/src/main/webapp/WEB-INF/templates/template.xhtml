@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:f="jakarta.faces.core">
+
+<h:head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>
+        <ui:insert name="title">PetManager - Admin Portal</ui:insert>
+    </title>
+
+    <!-- CSS -->
+    <h:outputStylesheet library="css" name="style.css"/>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</h:head>
+
+<h:body>
+    <!-- Navigation -->
+    <header>
+        <nav>
+            <!-- Brand -->
+            <h:link outcome="/index" styleClass="nav-brand">
+                <div class="brand-icon">
+                    <i data-lucide="paw-print" class="icon-24"></i>
+                </div>
+                <span>Pet<span class="brand-accent">Store</span></span>
+            </h:link>
+
+            <!-- Links -->
+            <div class="nav-links">
+                <h:link outcome="/index" value="Home" styleClass="nav-link"/>
+
+                <h:link outcome="/owners" value="Owners" styleClass="nav-link"
+                        rendered="#{request.isUserInRole('ADMIN')}"/>
+
+                <h:link outcome="/pets" value="My Pets" styleClass="nav-link"
+                        rendered="#{request.isUserInRole('OWNER')}"/>
+
+                <!-- Auth Buttons -->
+                <h:panelGroup rendered="#{empty request.remoteUser}">
+                    <h:link outcome="/login" styleClass="btn-nav">
+                        <i data-lucide="log-in" class="icon-16"></i>
+                        Sign In
+                    </h:link>
+                </h:panelGroup>
+
+                <h:panelGroup rendered="#{not empty request.remoteUser}">
+                    <h:form styleClass="inline-form">
+                        <h:commandButton action="#{loginManagedBean.logout}" value="Sign Out" styleClass="btn-nav btn-logout"/>
+                    </h:form>
+                </h:panelGroup>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-container">
+        <ui:insert name="content">
+            <!-- Content -->
+        </ui:insert>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <i data-lucide="paw-print" class="icon-20 text-primary-500"></i>
+                <span class="footer-brand-text">PetStore</span>
+            </div>
+            <div class="footer-note">
+                &#169; 2025 Pet Store Management. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Initialize Icons -->
+    <script>
+        lucide.createIcons();
+    </script>
+</h:body>
+</html>

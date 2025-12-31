@@ -1,0 +1,94 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                template="/WEB-INF/templates/template.xhtml">
+
+    <ui:define name="content">
+        <section class="page-section">
+            <div class="fade-in-up">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">My Pets</h1>
+                        <p class="page-subtitle">Keep track of your furry friends.</p>
+                    </div>
+                </div>
+
+                <div class="form-card form-card-wide">
+                    <h3 class="card-title">Add New Pet</h3>
+
+                    <h:form id="createPetForm">
+                        <h:messages globalOnly="true" styleClass="form-messages" infoClass="form-message-info" errorClass="form-message-error"/>
+
+                        <div class="form-grid cols-4">
+                            <div class="form-group">
+                                <label class="form-label">Name</label>
+                                <h:inputText id="name" value="#{petManagedBean.name}" required="true" requiredMessage="Name required" styleClass="form-input"/>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Type</label>
+                                <h:selectOneMenu id="type" value="#{petManagedBean.type}" required="true" requiredMessage="Type required" styleClass="form-input">
+                                    <f:selectItem itemLabel="Select Type..." itemValue=""/>
+                                    <f:selectItems value="#{petManagedBean.animalTypes}" />
+                                </h:selectOneMenu>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Birth Date</label>
+                                <h:inputText id="birth" value="#{petManagedBean.birth}" required="true" requiredMessage="Date required" styleClass="form-input">
+                                    <f:convertDateTime pattern="yyyy-MM-dd" type="date"/>
+                                    <f:passThroughAttribute name="placeholder" value="yyyy-MM-dd"/>
+                                </h:inputText>
+                            </div>
+
+                            <div class="form-group form-action">
+                                <h:commandButton value="Add Pet" action="#{petManagedBean.createPet}" styleClass="btn-primary"/>
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+
+                <div class="card-table-container">
+                    <div class="table-header">
+                        <h2>Pet Inventory</h2>
+                    </div>
+                    <h:dataTable value="#{petManagedBean.pets}" var="pet" styleClass="data-table">
+                        <h:column>
+                            <f:facet name="header">ID</f:facet>
+                            #{pet.id}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Name</f:facet>
+                            <div class="cell-strong">#{pet.name}</div>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Type</f:facet>
+                            <div class="type-badge">
+                                <div class="type-icon">
+                                    <i data-lucide="heart" class="icon-12"></i>
+                                </div>
+                                #{pet.animal}
+                            </div>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Birth Date</f:facet>
+                            <h:outputText value="#{pet.birth}" styleClass="mono-muted">
+                                <f:convertDateTime pattern="yyyy-MM-dd"/>
+                            </h:outputText>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Actions</f:facet>
+                            <h:form>
+                                 <h:commandButton value="Delete" action="#{petManagedBean.deletePet(pet.id)}"
+                                               styleClass="btn-danger-sm"
+                                               onclick="return confirm('Are you sure you want to delete this pet?');"/>
+                            </h:form>
+                        </h:column>
+                    </h:dataTable>
+                </div>
+            </div>
+        </section>
+    </ui:define>
+
+</ui:composition>
