@@ -2,6 +2,9 @@
 # Jakarta / EE
 jakarta-ee = "10.0.0"
 
+# Databases
+mysql = "9.5.0"
+
 # Testing
 junit = "5.13.1"
 hamcrest = "3.0"
@@ -64,6 +67,9 @@ shrinkwrap-resolver = { module = "org.jboss.shrinkwrap.resolver:shrinkwrap-resol
 # RESTEasy (Jakarta RESTful Web Services Implementation)
 resteasy-client = { module = "org.jboss.resteasy:resteasy-client", version.ref = "resteasy" }
 resteasy-jsonb-provider = { module = "org.jboss.resteasy:resteasy-json-binding-provider", version.ref = "resteasy" }
+
+# Database Drivers
+mysql-connector = { module = "com.mysql:mysql-connector-j", version.ref = "mysql" }
 
 # Build tooling
 gradle-tooling-api = { group = "org.gradle", name = "gradle-tooling-api", version.ref = "gradle-tooling" }

@@ -6,7 +6,7 @@
              version="3.0">
 
     <persistence-unit name="petstorePU" transaction-type="JTA">
-        <jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source>
+        <jta-data-source>java:jboss/datasources/PetstoreMySqlDS</jta-data-source>
         
         <class>pablog.petstore.domain.entities.User</class>
         <class>pablog.petstore.domain.entities.Owner</class>
