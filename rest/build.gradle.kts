@@ -12,6 +12,7 @@ dependencies {
     compileOnly(libs.jakarta.persistence.api)
     compileOnly(libs.jakarta.inject.api)
     compileOnly(libs.jakarta.cdi.api)
+    compileOnly(libs.jakarta.security.enterprise.api)
 
     // Test support from tests module
     testImplementation(project(":tests"))
@@ -22,6 +23,8 @@ dependencies {
     testImplementation(libs.jakarta.ejb.api)
     testImplementation(libs.jakarta.persistence.api)
     testImplementation(libs.jakarta.inject.api)
+    testImplementation(libs.jakarta.cdi.api)
+    testImplementation(libs.jakarta.security.enterprise.api)
 
     // JUnit 5
     testImplementation(platform(libs.junit.bom))

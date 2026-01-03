@@ -47,6 +47,7 @@ jakarta-ws-rs-api = { module = "jakarta.ws.rs:jakarta.ws.rs-api" }
 jakarta-jsonb-api = { module = "jakarta.json.bind:jakarta.json.bind-api" }
 jakarta-faces-api = { module = "jakarta.faces:jakarta.faces-api" }
 jakarta-servlet-api = { module = "jakarta.servlet:jakarta.servlet-api" }
+jakarta-security-enterprise-api = { module = "jakarta.security.enterprise:jakarta.security.enterprise-api" }
 
 # Testing
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }

@@ -8,57 +8,47 @@
 
   <!-- JAX-RS is activated by ApplicationConfig @ApplicationPath; no explicit servlet mapping needed. -->
 
-<!--  &lt;!&ndash; Security constraints &ndash;&gt;-->
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>user</web-resource-name>
+      <url-pattern>/api/users/*</url-pattern>
+      <http-method-omission>OPTIONS</http-method-omission>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>ADMIN</role-name>
+      <role-name>OWNER</role-name>
+    </auth-constraint>
+  </security-constraint>
 
-<!--  <security-constraint>-->
-<!--    <web-resource-collection>-->
-<!--      <web-resource-name>user</web-resource-name>-->
-<!--      <url-pattern>/api/users/*</url-pattern>-->
-<!--      <http-method-omission>OPTIONS</http-method-omission>-->
-<!--    </web-resource-collection>-->
-<!--    <auth-constraint>-->
-<!--      <role-name>ADMIN</role-name>-->
-<!--      <role-name>OWNER</role-name>-->
-<!--    </auth-constraint>-->
-<!--  </security-constraint>-->
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>admin</web-resource-name>
+      <url-pattern>/api/owners/*</url-pattern>
+      <http-method-omission>OPTIONS</http-method-omission>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>ADMIN</role-name>
+    </auth-constraint>
+  </security-constraint>
 
-<!--  <security-constraint>-->
-<!--    <web-resource-collection>-->
-<!--      <web-resource-name>admin</web-resource-name>-->
-<!--      <url-pattern>/api/owners/*</url-pattern>-->
-<!--      <http-method-omission>OPTIONS</http-method-omission>-->
-<!--    </web-resource-collection>-->
-<!--    <auth-constraint>-->
-<!--      <role-name>ADMIN</role-name>-->
-<!--    </auth-constraint>-->
-<!--  </security-constraint>-->
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>owner</web-resource-name>
+      <url-pattern>/api/pets/*</url-pattern>
+      <http-method-omission>OPTIONS</http-method-omission>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>OWNER</role-name>
+    </auth-constraint>
+  </security-constraint>
 
-<!--  <security-constraint>-->
-<!--    <web-resource-collection>-->
-<!--      <web-resource-name>owner</web-resource-name>-->
-<!--      <url-pattern>/api/pets/*</url-pattern>-->
-<!--      <http-method-omission>OPTIONS</http-method-omission>-->
-<!--    </web-resource-collection>-->
-<!--    <auth-constraint>-->
-<!--      <role-name>OWNER</role-name>-->
-<!--    </auth-constraint>-->
-<!--  </security-constraint>-->
+  <!-- Security roles -->
+  <security-role>
+    <role-name>ADMIN</role-name>
+  </security-role>
 
-<!--  &lt;!&ndash; Security roles &ndash;&gt;-->
-
-<!--  <security-role>-->
-<!--    <role-name>ADMIN</role-name>-->
-<!--  </security-role>-->
-
-<!--  <security-role>-->
-<!--    <role-name>OWNER</role-name>-->
-<!--  </security-role>-->
-
-<!--  &lt;!&ndash; Login configuration &ndash;&gt;-->
-
-<!--  <login-config>-->
-<!--    <auth-method>BASIC</auth-method>-->
-<!--    <realm-name>default</realm-name>-->
-<!--  </login-config>-->
+  <security-role>
+    <role-name>OWNER</role-name>
+  </security-role>
 
 </web-app>

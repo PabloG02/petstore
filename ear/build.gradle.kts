@@ -9,6 +9,7 @@ dependencies {
     // Keep domain and service on the classpath inside /lib
     earlib(project(":service"))
     earlib(project(":domain"))
+    earlib(project(":security"))
 
     // Bundle MySQL driver so WildFly can register the datasource
     earlib(libs.mysql.connector)

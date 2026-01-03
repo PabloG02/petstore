@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss:ejb-jar xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+               xmlns:jboss="urn:jboss:ejb3:11.0"
+               version="11.0">
+    <assembly-descriptor>
+        <security>
+            <ejb-name>*</ejb-name>
+<!--            <security-domain>pet-store</security-domain>-->
+        </security>
+    </assembly-descriptor>
+</jboss:ejb-jar>

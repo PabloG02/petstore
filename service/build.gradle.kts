@@ -1,5 +1,6 @@
 dependencies {
     implementation(project(":domain"))
+    compileOnly(project(":security"))
 
     testImplementation(project(":tests"))
 
@@ -9,6 +10,8 @@ dependencies {
     compileOnly(libs.jakarta.inject.api)
     compileOnly(libs.jakarta.transaction.api)
     compileOnly(libs.jakarta.annotation.api)
+    compileOnly(libs.jakarta.cdi.api)
+    compileOnly(libs.jakarta.security.enterprise.api)
 
     // Jakarta APIs for test compilation
     testImplementation(platform(libs.jakarta.bom))
@@ -17,6 +20,8 @@ dependencies {
     testCompileOnly(libs.jakarta.inject.api)
     testCompileOnly(libs.jakarta.transaction.api)
     testCompileOnly(libs.jakarta.annotation.api)
+    testCompileOnly(libs.jakarta.cdi.api)
+    testCompileOnly(libs.jakarta.security.enterprise.api)
 
     // JUnit 5
     testImplementation(platform(libs.junit.bom))

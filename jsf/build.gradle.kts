@@ -14,4 +14,5 @@ dependencies {
     compileOnly(libs.jakarta.inject.api)
     compileOnly(libs.jakarta.annotation.api)
     compileOnly(libs.jakarta.persistence.api)
+    compileOnly(libs.jakarta.security.enterprise.api)
 }

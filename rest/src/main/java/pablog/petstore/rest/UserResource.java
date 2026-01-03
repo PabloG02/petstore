@@ -1,9 +1,5 @@
 package pablog.petstore.rest;
 
-import pablog.petstore.domain.entities.User;
-import pablog.petstore.rest.entity.UserCredentials;
-import pablog.petstore.service.UserService;
-
 import jakarta.ejb.EJB;
 import jakarta.ejb.EJBAccessException;
 import jakarta.ws.rs.GET;
@@ -11,6 +7,9 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import pablog.petstore.domain.entities.User;
+import pablog.petstore.rest.entity.UserCredentials;
+import pablog.petstore.service.UserService;
 
 @Path("users")
 @Produces(MediaType.APPLICATION_JSON)
