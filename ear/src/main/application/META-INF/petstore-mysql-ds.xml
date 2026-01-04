@@ -8,7 +8,7 @@
                 use-java-context="true">
         <connection-url>jdbc:mysql://${env.MYSQL_HOST:localhost}:${env.MYSQL_PORT:3306}/petstore?serverTimezone=UTC&amp;useSSL=false&amp;allowPublicKeyRetrieval=true</connection-url>
         <driver-class>com.mysql.cj.jdbc.Driver</driver-class>
-        <driver>ear-1.0.0-SNAPSHOT.ear_com.mysql.cj.jdbc.Driver_9_5</driver>
+        <driver>petstore-1.0.0-SNAPSHOT.ear_com.mysql.cj.jdbc.Driver_9_5</driver>
         <security>
             <user-name>${env.MYSQL_USER:petstore}</user-name>
             <password>${env.MYSQL_PASSWORD:petstore}</password>
