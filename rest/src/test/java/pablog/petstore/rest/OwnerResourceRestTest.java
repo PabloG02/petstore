@@ -5,6 +5,9 @@ import pablog.petstore.domain.entities.Owner;
 import pablog.petstore.rest.GenericTypes.ListOwnerType;
 import pablog.petstore.rest.entity.OwnerCreationData;
 import pablog.petstore.rest.entity.OwnerEditionData;
+import pablog.petstore.security.HybridAuthenticationMechanism;
+import pablog.petstore.security.MD5PasswordHash;
+import pablog.petstore.security.TestSecurityConfig;
 import pablog.petstore.service.OwnerService;
 import pablog.petstore.service.util.security.RoleCaller;
 import pablog.petstore.service.util.security.TestPrincipal;
@@ -28,6 +31,8 @@ import jakarta.ws.rs.core.Response;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 
 import static pablog.petstore.domain.entities.IsEqualToOwner.containsOwnersInAnyOrder;
@@ -42,7 +47,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class OwnerResourceRestTest {
     private static final String BASE_PATH = "api/owners/";
-    private static final String BASIC_AUTHORIZATION = "Basic am9zZTpqb3NlcGFzcw==";
+    private static final String BASIC_AUTHORIZATION = "Basic " + Base64.getEncoder()
+            .encodeToString("jose:josepass".getBytes(StandardCharsets.UTF_8));
     @ArquillianResource
     private URL deploymentUrl;
     @Inject
@@ -62,13 +68,13 @@ class OwnerResourceRestTest {
                 .addPackage(OwnerCreationData.class.getPackage())
                 .addPackage(OwnerService.class.getPackage())
                 .addPackage(Owner.class.getPackage())
+                .addClasses(HybridAuthenticationMechanism.class, MD5PasswordHash.class, TestSecurityConfig.class)
                 .addPackage(DBUnitHelper.class.getPackage())
                 .addPackage(TestPrincipal.class.getPackage())
                 .addPackage(RoleCaller.class.getPackage())
                 .addAsLibraries(archives)
                 .addAsResource(new File("../tests/src/main/resources/"), "")
                 .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
-                //.addAsWebInfResource("jboss-web.xml")
                 .addAsWebInfResource("web.xml")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
 

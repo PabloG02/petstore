@@ -16,6 +16,7 @@ dependencies {
 
     // Test support from tests module
     testImplementation(project(":tests"))
+    testImplementation(project(":security"))
 
     // Jakarta APIs for test compilation
     testImplementation(platform(libs.jakarta.bom))

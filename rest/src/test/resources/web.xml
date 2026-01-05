@@ -27,6 +27,18 @@
 
     <security-constraint>
         <web-resource-collection>
+            <web-resource-name>user</web-resource-name>
+            <url-pattern>/api/users/*</url-pattern>
+            <http-method-omission>OPTIONS</http-method-omission>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>ADMIN</role-name>
+            <role-name>OWNER</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <security-constraint>
+        <web-resource-collection>
             <web-resource-name>admin</web-resource-name>
             <url-pattern>/api/owners/*</url-pattern>
             <http-method-omission>OPTIONS</http-method-omission>
@@ -48,7 +60,6 @@
     </security-constraint>
 
     <!-- Security roles -->
-
     <security-role>
         <role-name>ADMIN</role-name>
     </security-role>
