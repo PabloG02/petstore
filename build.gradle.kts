@@ -1,5 +1,9 @@
+import org.gradle.testing.jacoco.plugins.JacocoPluginExtension
+import org.gradle.testing.jacoco.tasks.JacocoReport
+
 plugins {
     java
+    jacoco
 }
 
 group = "pablog"
@@ -38,5 +42,85 @@ subprojects {
         }
 
         systemProperty("jboss.home", jbossHome)
+    }
+
+    // Apply JaCoCo to all subprojects except tests and jsf
+    val excludedFromCoverage = listOf("tests", "jsf")
+    if (name !in excludedFromCoverage) {
+        apply(plugin = "jacoco")
+
+        jacoco {
+            toolVersion = "0.8.13"
+        }
+
+        tasks.withType<Test>().configureEach {
+            finalizedBy(tasks.named("jacocoTestReport"))
+        }
+
+        tasks.withType<JacocoReport>().configureEach {
+            dependsOn(tasks.named("test"))
+
+            reports {
+                xml.required = true
+                html.required = true
+                csv.required = false
+            }
+        }
+    }
+
+    // Wire JaCoCo agent for Arquillian tests in rest and service modules to record coverage
+    val modulesWithArquillian = listOf("rest", "service")
+    if (name in modulesWithArquillian) {
+        val jacocoVersion = extensions.getByType<JacocoPluginExtension>().toolVersion
+
+        val jacocoRuntimeAgent = configurations.maybeCreate("jacocoRuntimeAgent")
+        dependencies {
+            add("jacocoRuntimeAgent", "org.jacoco:org.jacoco.agent:${jacocoVersion}:runtime")
+        }
+
+        tasks.withType<Test>().configureEach {
+            val destFile = layout.buildDirectory.file("jacoco/test.exec")
+
+            doFirst {
+                val agentPath = jacocoRuntimeAgent.resolve().single()
+                val dest = destFile.get().asFile
+
+                dest.parentFile.mkdirs()
+
+                // Make the agent string available for substitution in arquillian.xml
+                val javaagent = "-javaagent:${agentPath.absolutePath}=destfile=${dest.absolutePath},append=true,output=file"
+                systemProperty("jacoco.javaagent", javaagent)
+                systemProperty("jacoco.destfile", dest.absolutePath)
+            }
+        }
+    }
+}
+
+tasks.register<JacocoReport>("jacocoRootReport") {
+    group = "Verification"
+    description = "Aggregates JaCoCo coverage across all subprojects"
+
+    val excludedProjects = listOf("tests", "jsf")
+    val coveredProjects = subprojects.filter { it.name !in excludedProjects }
+
+    dependsOn(coveredProjects.map { it.tasks.named("test") })
+
+    executionData.from(coveredProjects.map { it.layout.buildDirectory.file("jacoco/test.exec") })
+
+    val mainSourceSets = coveredProjects.mapNotNull {
+        it.extensions.findByType(SourceSetContainer::class.java)?.findByName("main")
+    }
+
+    sourceDirectories.from(mainSourceSets.flatMap { it.allSource.srcDirs })
+    classDirectories.from(mainSourceSets.map { it.output })
+
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = false
+    }
+
+    doLast {
+        logger.lifecycle("Aggregated coverage report: ${reports.html.outputLocation.get().asFile.resolve("index.html").absolutePath}")
     }
 }

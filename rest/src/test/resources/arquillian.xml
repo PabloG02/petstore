@@ -12,6 +12,8 @@
             <property name="jbossHome">${jboss.home}</property>
             <property name="serverConfig">standalone.xml</property>
             <property name="allowConnectingToRunningServer">true</property>
+            <!-- Inject JaCoCo agent into the managed container when provided by Gradle test task -->
+            <property name="javaVmArguments">${jacoco.javaagent}</property>
         </configuration>
     </container>
 

@@ -10,6 +10,7 @@ junit = "5.13.1"
 hamcrest = "3.0"
 dbunit = "3.0.0"
 mockito = "5.18.0"
+jacoco = "0.8.13"
 
 # Arquillian / Containers
 arquillian-core = "1.10.0.Final"
@@ -55,6 +56,7 @@ junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher
 hamcrest = { module = "org.hamcrest:hamcrest", version.ref = "hamcrest" }
 dbunit = { module = "org.dbunit:dbunit", version.ref = "dbunit" }
 mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
+jacoco-agent = { module = "org.jacoco:org.jacoco.agent", version.ref = "jacoco" }
 
 # Arquillian
 arquillian-junit5-container = { module = "org.jboss.arquillian.junit5:arquillian-junit5-container" }
