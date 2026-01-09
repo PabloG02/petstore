@@ -1,0 +1,176 @@
+# GitLab CI/CD Pipeline for Pet Store Jakarta EE Application
+
+variables:
+  # Gradle configuration
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.caching=true"
+  GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
+  
+  # WildFly configuration
+  WILDFLY_VERSION: "38.0.1.Final"
+  WILDFLY_HOME: "$CI_PROJECT_DIR/wildfly-${WILDFLY_VERSION}"
+
+stages:
+  - prepare
+  - test
+  - deploy
+
+# 1. Setup WildFly and Configure Elytron
+setup:wildfly:
+  stage: prepare
+  image: eclipse-temurin:21-jdk
+  before_script:
+    # Install wget if not available
+    - apt-get update && apt-get install -y wget
+  script:
+    # Download and extract WildFly if not cached
+    - |
+      if [ -d "$WILDFLY_HOME" ]; then
+        echo "Using cached WildFly installation."
+      else
+        echo "Cache miss. Downloading WildFly ${WILDFLY_VERSION}..."
+        wget -q https://github.com/wildfly/wildfly/releases/download/${WILDFLY_VERSION}/wildfly-${WILDFLY_VERSION}.tar.gz
+        tar -xzf wildfly-${WILDFLY_VERSION}.tar.gz
+        rm wildfly-${WILDFLY_VERSION}.tar.gz
+      fi
+
+    # Download Elytron configuration script
+    - echo "Downloading Elytron configuration script..."
+    - wget -q https://raw.githubusercontent.com/wildfly/quickstart/main/ee-security/configure-elytron.cli -O configure-elytron.cli
+
+    # Start WildFly in background
+    - echo "Starting WildFly server..."
+    - $WILDFLY_HOME/bin/standalone.sh > /dev/null 2>&1 &
+    - WILDFLY_PID=$!
+
+    # Wait for WildFly to start (max 60 seconds)
+    - echo "Waiting for WildFly to start..."
+    - |
+      for i in {1..60}; do
+        if $WILDFLY_HOME/bin/jboss-cli.sh --connect --command=":read-attribute(name=server-state)" 2>/dev/null | grep -q "running"; then
+          echo "WildFly started successfully"
+          break
+        fi
+        if [ $i -eq 60 ]; then
+          echo "ERROR: WildFly failed to start within 60 seconds"
+          kill $WILDFLY_PID 2>/dev/null || true
+          exit 1
+        fi
+        sleep 1
+      done
+
+    # Configure Elytron security
+    - echo "Configuring Elytron security subsystem..."
+    - $WILDFLY_HOME/bin/jboss-cli.sh --connect --file=configure-elytron.cli
+
+    # Reload server configuration
+    - echo "Reloading WildFly configuration..."
+    - $WILDFLY_HOME/bin/jboss-cli.sh --connect --command=reload
+
+    # Wait for reload to complete
+    - sleep 5
+
+    # Shutdown WildFly
+    - echo "Shutting down WildFly..."
+    - $WILDFLY_HOME/bin/jboss-cli.sh --connect --command=shutdown || true
+    - wait $WILDFLY_PID 2>/dev/null || true
+
+    - echo "WildFly setup and configuration complete"
+    - ls -la $WILDFLY_HOME
+
+  # Cache the configured WildFly server, so it can be reused in later jobs
+  cache:
+    key: "wildfly-server-${WILDFLY_VERSION}"
+    paths:
+      - wildfly-${WILDFLY_VERSION}
+    policy: pull-push
+
+# 2. Build the application
+build:
+  stage: prepare
+  image: eclipse-temurin:21-jdk
+  before_script:
+    - chmod +x gradlew
+  script:
+    - echo "Building Pet Store application..."
+    - ./gradlew clean assemble --no-daemon --build-cache
+
+  # Cache Gradle dependencies per branch
+  cache:
+    key: "gradle-deps-${CI_COMMIT_REF_SLUG}"
+    paths:
+      - .gradle/wrapper
+      - .gradle/caches
+    policy: pull-push
+
+  artifacts:
+    paths:
+      - "**/build/libs/*.jar"
+      - "**/build/libs/*.war"
+      - "**/build/libs/*.ear"
+      # Save classes to prevent recompilation in the test stage
+      - "**/build/classes"
+      - "**/build/resources"
+    expire_in: 1 day
+
+# 3. Run all tests and generate coverage report
+test:
+  stage: test
+  image: eclipse-temurin:21-jdk
+  needs:
+    - job: build
+      artifacts: true
+  before_script:
+    - chmod +x gradlew
+  script:
+    - echo "WildFly home is at $WILDFLY_HOME"
+    - ls -la $WILDFLY_HOME || echo "WildFly cache not found!"
+
+    # Verify WildFly is available from cache
+    - |
+      if [ ! -d "$WILDFLY_HOME" ]; then
+        echo "ERROR: WildFly not found in cache. This should not happen."
+        exit 1
+      fi
+
+    # Run tests using the cached WildFly installation
+    - ./gradlew jacocoRootReport -Pjboss.home=$WILDFLY_HOME --no-daemon --info
+
+  coverage: '/Total.*?([0-9]{1,3})%/'
+
+  cache:
+    # Pull both WildFly and Gradle caches
+    - key: "wildfly-server-${WILDFLY_VERSION}"
+      paths:
+        - wildfly-${WILDFLY_VERSION}
+      policy: pull
+    - key: "gradle-deps-${CI_COMMIT_REF_SLUG}"
+      paths:
+        - .gradle/wrapper
+        - .gradle/caches
+      policy: pull
+
+  artifacts:
+    when: always
+    paths:
+      - "**/build/reports"
+      - "**/build/test-results"
+    reports:
+      junit: "**/build/test-results/test/TEST-*.xml"
+      coverage_report:
+        coverage_format: cobertura
+        path: build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
+
+# 4. Deploy Artifact (Simulated)
+deploy:ear:
+  stage: deploy
+  image: eclipse-temurin:21-jdk
+  needs:
+    - job: build
+      artifacts: true
+  script:
+    - echo "Deploying EAR package..."
+    - ls -la ear/build/libs/
+    # Add actual deployment script here (e.g., scp, maven deploy, etc.)
+  artifacts:
+    paths:
+      - ear/build/libs/*.ear

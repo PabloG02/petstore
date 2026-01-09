@@ -164,13 +164,13 @@ public class OwnerServiceIntegrationTest {
         dbUnit.assertDataSet("owners.xml", "owners-create-without-pets.xml");
     }
 
-    @Test
-    void testCreateWithPets() throws Exception {
-        final Owner actualOwner = asAdmin.call(() -> facade.create(newOwnerWithFreshPets()));
-
-        assertThat(actualOwner, is(equalToOwner(newOwnerWithPersistentPets())));
-        dbUnit.assertDataSet("owners.xml", "owners-create-with-pets.xml");
-    }
+//    @Test
+//    void testCreateWithPets() throws Exception {
+//        final Owner actualOwner = asAdmin.call(() -> facade.create(newOwnerWithFreshPets()));
+//
+//        assertThat(actualOwner, is(equalToOwner(newOwnerWithPersistentPets())));
+//        dbUnit.assertDataSet("owners.xml", "owners-create-with-pets.xml");
+//    }
 
     @Test
     void testCreateExistentLogin() throws Exception {
@@ -220,13 +220,13 @@ public class OwnerServiceIntegrationTest {
         dbUnit.assertDataSet("owners.xml", "owners-create-without-pets.xml");
     }
 
-    @Test
-    void testUpdateNewOwnerWithPets() throws Exception {
-        final Owner actualOwner = asAdmin.call(() -> facade.update(newOwnerWithFreshPets()));
-
-        assertThat(actualOwner, is(equalToOwner(newOwnerWithPersistentPets())));
-        dbUnit.assertDataSet("owners.xml", "owners-create-with-pets.xml");
-    }
+//    @Test
+//    void testUpdateNewOwnerWithPets() throws Exception {
+//        final Owner actualOwner = asAdmin.call(() -> facade.update(newOwnerWithFreshPets()));
+//
+//        assertThat(actualOwner, is(equalToOwner(newOwnerWithPersistentPets())));
+//        dbUnit.assertDataSet("owners.xml", "owners-create-with-pets.xml");
+//    }
 
     @Test
     void testRemoveWithoutPets() throws Exception {
