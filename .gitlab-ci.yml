@@ -9,6 +9,10 @@ variables:
   WILDFLY_VERSION: "38.0.1.Final"
   WILDFLY_HOME: "$CI_PROJECT_DIR/wildfly-${WILDFLY_VERSION}"
 
+  # CRITICAL: Set timezone to match local development
+  # This ensures timestamp comparisons work consistently
+  TZ: "Europe/Madrid"
+
 stages:
   - prepare
   - test
@@ -121,6 +125,9 @@ test:
       artifacts: true
   before_script:
     - chmod +x gradlew
+    # Verify timezone is set correctly
+    - echo "Current timezone - $(date)"
+    - echo "TZ variable - $TZ"
   script:
     - echo "WildFly home is at $WILDFLY_HOME"
     - ls -la $WILDFLY_HOME || echo "WildFly cache not found!"
@@ -133,7 +140,8 @@ test:
       fi
 
     # Run tests using the cached WildFly installation
-    - ./gradlew jacocoRootReport -Pjboss.home=$WILDFLY_HOME --no-daemon --info
+    # Pass timezone as JVM property to ensure consistency
+    - ./gradlew jacocoRootReport -Pjboss.home=$WILDFLY_HOME -Duser.timezone=$TZ --no-daemon --info
 
   coverage: '/Total.*?([0-9]{1,3})%/'
 
