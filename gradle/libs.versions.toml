@@ -6,7 +6,7 @@ jakarta-ee = "10.0.0"
 mysql = "9.5.0"
 
 # Testing
-junit = "5.13.1"
+junit = "5.10.3"
 hamcrest = "3.0"
 dbunit = "3.0.0"
 mockito = "5.18.0"
