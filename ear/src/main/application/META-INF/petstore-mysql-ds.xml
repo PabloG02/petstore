@@ -6,12 +6,12 @@
                 pool-name="PetstoreMySqlDS"
                 enabled="true"
                 use-java-context="true">
-        <connection-url>jdbc:mysql://${env.MYSQL_HOST:localhost}:${env.MYSQL_PORT:3306}/petstore?serverTimezone=UTC&amp;useSSL=false&amp;allowPublicKeyRetrieval=true</connection-url>
+        <connection-url>jdbc:mysql://${mysql.host:localhost}:${mysql.port:3306}/petstore?serverTimezone=UTC&amp;useSSL=false&amp;allowPublicKeyRetrieval=true</connection-url>
         <driver-class>com.mysql.cj.jdbc.Driver</driver-class>
         <driver>petstore-1.0.0-SNAPSHOT.ear_com.mysql.cj.jdbc.Driver_9_5</driver>
         <security>
-            <user-name>${env.MYSQL_USER:petstore}</user-name>
-            <password>${env.MYSQL_PASSWORD:petstore}</password>
+            <user-name>${mysql.user:petstore}</user-name>
+            <password>${mysql.password:petstore}</password>
         </security>
         <validation>
             <validate-on-match>true</validate-on-match>
