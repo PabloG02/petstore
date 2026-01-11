@@ -9,6 +9,12 @@ variables:
   WILDFLY_VERSION: "38.0.1.Final"
   WILDFLY_HOME: "$CI_PROJECT_DIR/wildfly-${WILDFLY_VERSION}"
 
+  # Deployment Target
+  DEPLOY_HOST: "devops-wildfly"
+  DEPLOY_PORT: "9990"
+  DEPLOY_USER: "admin"
+  DEPLOY_PASS: "Admin#123"
+
   # CRITICAL: Set timezone to match local development
   # This ensures timestamp comparisons work consistently
   TZ: "Europe/Madrid"
@@ -175,10 +181,38 @@ deploy:ear:
   needs:
     - job: build
       artifacts: true
+    - job: setup:wildfly
+      artifacts: false
   script:
     - echo "Deploying EAR package..."
-    - ls -la ear/build/libs/
-    # Add actual deployment script here (e.g., scp, maven deploy, etc.)
+
+    # Find the EAR file
+    - |
+      EAR_FILE=$(find ear/build/libs -name "*.ear" | head -n 1)
+      if [ -z "$EAR_FILE" ]; then
+        echo "ERROR: No EAR file found in ear/build/libs/"
+        exit 1
+      fi
+      echo "Found EAR file: $EAR_FILE"
+
+    # Ensure jboss-cli is executable
+    - chmod +x "$WILDFLY_HOME/bin/jboss-cli.sh"
+
+    # Deploy using jboss-cli
+    - |
+      "$WILDFLY_HOME/bin/jboss-cli.sh" \
+        --connect \
+        --controller="${DEPLOY_HOST}:${DEPLOY_PORT}" \
+        --user="${DEPLOY_USER}" \
+        --password="${DEPLOY_PASS}" \
+        --command="deploy ${EAR_FILE} --force"
+  rules:
+      - if: $CI_COMMIT_BRANCH == "main"
+  cache:
+    key: "wildfly-server-${WILDFLY_VERSION}"
+    paths:
+      - wildfly-${WILDFLY_VERSION}
+    policy: pull
   artifacts:
     paths:
       - ear/build/libs/*.ear
