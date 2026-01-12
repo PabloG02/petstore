@@ -4,6 +4,13 @@ variables:
   # Gradle configuration
   GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.caching=true"
   GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
+
+  # Nexus Configuration
+  NEXUS_URL: "http://nexus.home.arpa:8081"
+  NEXUS_USER: "gitlab-ci"
+  NEXUS_PASSWORD: "gitlab-ci"
+  GROUP_ID: "pablog"
+  ARTIFACT_ID: "petstore"
   
   # WildFly configuration
   WILDFLY_VERSION: "38.0.1.Final"
@@ -176,7 +183,59 @@ test:
         coverage_format: cobertura
         path: build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
 
-# 4. Deploy Artifact (Simulated)
+# 4a. Upload to Nexus
+deploy:nexus:
+  stage: deploy
+  image: curlimages/curl:latest
+  needs:
+    - job: build
+      artifacts: true
+    - job: setup:wildfly
+      artifacts: false
+    - job: test
+      artifacts: true
+  script:
+    - echo "Preparing to upload artifacts to Nexus..."
+
+    # 1. Locate the EAR file
+    - EAR_FILE=$(find ear/build/libs -name "*.ear" | head -n 1)
+    - |
+      if [ -z "$EAR_FILE" ]; then
+        echo "ERROR: EAR file not found!"
+        exit 1
+      fi
+
+    # 2. Extract Version and Filename
+    - FILENAME=$(basename "$EAR_FILE")
+    # Removes "petstore-" prefix and ".ear" suffix to get version (e.g. 1.0.0-SNAPSHOT)
+    - VERSION=$(echo "$FILENAME" | sed -e "s/${ARTIFACT_ID}-//" -e 's/\.ear//')
+
+    # 3. Determine Target Repository (Snapshot vs Release)
+    - |
+      if [ -n "$CI_COMMIT_TAG" ]; then
+        echo "Tag detected: $CI_COMMIT_TAG - Uploading to PRODUCT RELEASES"
+        REPO_NAME="product-releases"
+      else
+        echo "Branch commit detected - Uploading to INTERNAL BUILDS"
+        REPO_NAME="internal-builds"
+      fi
+
+    # 4. Construct Maven Path
+    # Structure: repository/repo_name/group/id/artifact/id/version/filename
+    - NEXUS_PATH="${NEXUS_URL}/repository/${REPO_NAME}/${GROUP_ID}/${ARTIFACT_ID}/${VERSION}/${FILENAME}"
+
+    - echo "Uploading $FILENAME to $NEXUS_PATH"
+
+    # 5. Execute Upload
+    - |
+      curl -v -u "${NEXUS_USER}:${NEXUS_PASSWORD}" --upload-file "$EAR_FILE" "$NEXUS_PATH"
+
+  rules:
+    # Run on main branch OR whenever a tag is created
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG
+
+# 4b. Deploy to WildFly Server
 deploy:ear:
   stage: deploy
   image: eclipse-temurin:21-jdk
