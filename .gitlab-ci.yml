@@ -127,6 +127,8 @@ test:
   stage: test
   image: eclipse-temurin:21-jdk
   needs:
+    - job: setup:wildfly
+      artifacts: false
     - job: build
       artifacts: true
   before_script:
@@ -183,6 +185,8 @@ deploy:ear:
       artifacts: true
     - job: setup:wildfly
       artifacts: false
+    - job: test
+      artifacts: true
   script:
     - echo "Deploying EAR package..."
 
