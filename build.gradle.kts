@@ -6,9 +6,6 @@ plugins {
     jacoco
 }
 
-group = "pablog"
-version = "1.0-SNAPSHOT"
-
 allprojects {
     repositories {
         mavenCentral()
@@ -17,18 +14,22 @@ allprojects {
 }
 
 subprojects {
-    apply(plugin = "java")
+    if (name != "ear") {
+        apply(plugin = "java")
+    }
 
     group = "pablog"
     version = "1.0.0-SNAPSHOT"
 
-    java {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
+    pluginManager.withPlugin("java") {
+        configure<JavaPluginExtension> {
+            sourceCompatibility = JavaVersion.VERSION_21
+            targetCompatibility = JavaVersion.VERSION_21
+        }
 
-    tasks.withType<JavaCompile> {
-        options.encoding = "UTF-8"
+        tasks.withType<JavaCompile> {
+            options.encoding = "UTF-8"
+        }
     }
 
     tasks.withType<Test>().configureEach {
@@ -45,7 +46,7 @@ subprojects {
     }
 
     // Apply JaCoCo to all subprojects except tests and jsf
-    val excludedFromCoverage = listOf("tests", "jsf")
+    val excludedFromCoverage = listOf("tests", "jsf", "ear")
     if (name !in excludedFromCoverage) {
         apply(plugin = "jacoco")
 
@@ -100,7 +101,7 @@ tasks.register<JacocoReport>("jacocoRootReport") {
     group = "Verification"
     description = "Aggregates JaCoCo coverage across all subprojects"
 
-    val excludedProjects = listOf("tests", "jsf")
+    val excludedProjects = listOf("tests", "jsf", "ear")
     val coveredProjects = subprojects.filter { it.name !in excludedProjects }
 
     dependsOn(coveredProjects.map { it.tasks.named("test") })

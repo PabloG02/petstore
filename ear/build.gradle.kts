@@ -39,6 +39,15 @@ tasks.ear {
     from(jsfWar)
     from(restWar)
 
+    // Inject the project version into the datasource driver reference
+    val driverName = "${archiveBaseName.get()}-${project.version}.ear_com.mysql.cj.jdbc.Driver_9_5"
+    filesMatching("META-INF/petstore-mysql-ds.xml") {
+        filteringCharset = "UTF-8"
+        filter { line ->
+            line.replace("\${dbDriver}", driverName)
+        }
+    }
+
     // Generate application.xml with context roots similar to Maven maven-ear-plugin
     deploymentDescriptor {
         applicationName = "Pet Store"
