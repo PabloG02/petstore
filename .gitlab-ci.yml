@@ -261,14 +261,38 @@ deploy:ear:
     # Ensure jboss-cli is executable
     - chmod +x "$WILDFLY_HOME/bin/jboss-cli.sh"
 
-    # Deploy using jboss-cli
+    # Undeploy any existing petstore deployment (ignore errors if none exists)
     - |
+      echo "Checking for existing petstore deployments..."
+      EXISTING_DEPLOYMENT=$("$WILDFLY_HOME/bin/jboss-cli.sh" \
+        --connect \
+        --controller="${DEPLOY_HOST}:${DEPLOY_PORT}" \
+        --user="${DEPLOY_USER}" \
+        --password="${DEPLOY_PASS}" \
+        --command="deployment-info" | grep -o "petstore-[^ ]*\.ear" | head -n 1 || echo "")
+      
+      if [ -n "$EXISTING_DEPLOYMENT" ]; then
+        echo "Found existing deployment: $EXISTING_DEPLOYMENT"
+        echo "Undeploying..."
+        "$WILDFLY_HOME/bin/jboss-cli.sh" \
+          --connect \
+          --controller="${DEPLOY_HOST}:${DEPLOY_PORT}" \
+          --user="${DEPLOY_USER}" \
+          --password="${DEPLOY_PASS}" \
+          --command="undeploy $EXISTING_DEPLOYMENT" || echo "Undeploy failed, continuing anyway..."
+      else
+        echo "No existing petstore deployment found"
+      fi
+
+    # Deploy the new version
+    - |
+      echo "Deploying new version..."
       "$WILDFLY_HOME/bin/jboss-cli.sh" \
         --connect \
         --controller="${DEPLOY_HOST}:${DEPLOY_PORT}" \
         --user="${DEPLOY_USER}" \
         --password="${DEPLOY_PASS}" \
-        --command="deploy ${EAR_FILE} --force"
+        --command="deploy ${EAR_FILE}"
   rules:
       - if: $CI_COMMIT_BRANCH == "main"
   cache:
