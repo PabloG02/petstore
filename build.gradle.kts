@@ -6,6 +6,36 @@ plugins {
     jacoco
 }
 
+// Base version defined in build file
+private val baseVersion = "1.0.0-SNAPSHOT"
+
+// Get commit hash from CI environment
+private val commitHash = providers.environmentVariable("GITHUB_SHA")
+    .orElse(providers.environmentVariable("CI_COMMIT_SHA"))
+    .getOrNull()
+
+// Get git tag from CI environment
+private val gitTag = providers.environmentVariable("CI_COMMIT_TAG")
+    .orElse(providers.environmentVariable("GITHUB_REF_NAME"))
+    .map { it.removePrefix("refs/tags/").removePrefix("v") }
+    .getOrNull()
+
+// Determine final version
+private val projectVersion = when {
+    !gitTag.isNullOrBlank() -> {
+        // Tagged release: validate that tag matches the base version
+        require(gitTag == baseVersion) {
+            "Git tag '$gitTag' does not match project version '${baseVersion}'"
+        }
+        gitTag
+    }
+    commitHash != null -> commitHash  // CI build: use commit hash
+    else -> baseVersion
+}
+
+group = "pablog"
+version = projectVersion
+
 allprojects {
     repositories {
         mavenCentral()
@@ -18,8 +48,8 @@ subprojects {
         apply(plugin = "java")
     }
 
-    group = "pablog"
-    version = "1.0.0-SNAPSHOT"
+    group = rootProject.group
+    version = rootProject.version
 
     pluginManager.withPlugin("java") {
         configure<JavaPluginExtension> {
