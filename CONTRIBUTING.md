@@ -3,13 +3,14 @@
 ## Tabla de contenidos
 
 1. [Primeros pasos](#primeros-pasos)
-2. [Arquitectura del proyecto](#arquitectura-del-proyecto)
-3. [Entorno de desarrollo](#entorno-de-desarrollo)
-4. [Configuración de tu entorno local](#configuración-de-tu-entorno-local)
-5. [Flujo de trabajo de control de versiones](#flujo-de-trabajo-de-control-de-versiones)
-6. [Estrategia de pruebas](#estrategia-de-pruebas)
-7. [Estilo y estándares de código](#estilo-y-estándares-de-código)
-8. [Integración continua](#integración-continua)
+2. [Desarrollo de una tarea](#desarrollo-de-una-tarea)
+3. [Arquitectura del proyecto](#arquitectura-del-proyecto)
+4. [Entorno de desarrollo](#entorno-de-desarrollo)
+5. [Configuración de tu entorno local](#configuración-de-tu-entorno-local)
+6. [Flujo de trabajo de control de versiones](#flujo-de-trabajo-de-control-de-versiones)
+7. [Estrategia de pruebas](#estrategia-de-pruebas)
+8. [Estilo y estándares de código](#estilo-y-estándares-de-código)
+9. [Integración continua](#integración-continua)
 
 ## 1. Primeros pasos
 
@@ -19,7 +20,24 @@ Para poder contribuir, es necesario clonar el repositorio usando el comando `git
 
 El desarrollo se realiza en un entorno de **integración continua** con **despliegue continuo** en un servidor de preproducción (staging).
 
-## 2. Arquitectura del proyecto
+## 2. Desarrollo de una tarea
+
+El proceso habitual para realizar una tarea será, normalmente, el siguiente:
+1. Seleccionar en Jira la tarea que se desea desarrollar y leer atentamente su descripción. Cambiar el estado de la tarea a "En progreso".
+2. Abrir el entorno de desarrollo.
+3. Verificar que se está trabajando en la rama `main`. En caso contrario, cambiar a esta rama. Crear una rama a partir de ella del tipo `fix/xxx` o `feature/xxx`, siendo `xxx` descriptivo de lo que se va a realizar.
+4. Hacer pull de los últimos cambios (ver sección 6).
+5. Implementar la solución, incluyendo los tests (ver sección 7).
+    1. Hacer un commit con cada parte estable (completa y testeada) que se desarrolle.
+    2. Cada vez que se haga un commit, enviarlo al repositorio central GitLab para compartirlo con el resto del equipo (ver sección 6).
+    3. Comprobar que la construcción funciona correctamente con GitLab CI.
+    4. Si la construcción falla, seguir los pasos descritos en la sección 6.3.
+    5. Si la construcción es correcta, comprobar que el repositorio Maven Nexus tiene una nueva versión del proyecto.
+6. Una vez finalizada la implementación, crear un Merge Request 
+7. Mover la tarea en Jira al estado "En revisión".
+8. Al acabar la jornada de trabajo, recordar registrar las horas trabajadas en la tarea de Jira.
+
+## 3. Arquitectura del proyecto
 
 La aplicación Pet Store está organizada en 7 módulos distintos, cada uno con responsabilidades específicas dentro de la arquitectura general:
 
@@ -31,7 +49,7 @@ La aplicación Pet Store está organizada en 7 módulos distintos, cada uno con 
 - **tests**: agrupa utilidades y recursos compartidos para pruebas, como datos de prueba y clases auxiliares para tests de integración.
 - **ear**: módulo de empaquetado que genera el Enterprise Archive (EAR) final para el despliegue en un servidor Jakarta EE.
 
-## 3. Entorno de desarrollo
+## 4. Entorno de desarrollo
 
 Para trabajar en el proyecto Pet Store es necesario disponer con las siguientes herramientas y servicios, que cubren el desarrollo local, la integración continua y el despliegue en distintos entornos:
 
@@ -40,7 +58,6 @@ Para trabajar en el proyecto Pet Store es necesario disponer con las siguientes 
 - **Git**: Sistema de control de versiones empleado para el desarrollo colaborativo. Es imprescindible para obtener el código, crear ramas y enviar cambios al repositorio.
 - **[GitLab](http://gitlab.home.arpa/)**: Plataforma en la que se aloja el repositorio Git del proyecto. Se utiliza para la gestión del código fuente, revisiones mediante *merge requests* y control del historial de cambios.
 - **GitLab CI**: Herramienta de integración continua encargada de ejecutar automáticamente las compilaciones, pruebas y validaciones del proyecto en cada cambio relevante del repositorio.
-- **[SonarQube](http://sonar.home.arpa/)**: Servicio de análisis de calidad de código. Permite evaluar aspectos como mantenibilidad, posibles errores y problemas de seguridad, integrándose con los procesos de CI.
 - **WildFly local**: Servidor de aplicaciones utilizado durante el desarrollo para ejecutar y depurar la aplicación en el entorno del desarrollador.
 - **WildFly de pre-producción**: Entorno de despliegue intermedio donde se publica la aplicación tras una construcción correcta en integración continua, con el objetivo de validar su funcionamiento antes de su uso final.
 - **Nexus Repository Manager**: Repositorio de artefactos donde se publican las versiones empaquetadas del proyecto destinadas a su consumo por clientes.
@@ -48,7 +65,7 @@ Para trabajar en el proyecto Pet Store es necesario disponer con las siguientes 
 - **MySQL 9 o superior**: Sistema gestor de bases de datos utilizado por la aplicación. Debe estar disponible en el entorno local y correctamente configurado para el proyecto.
 - **Jira**: Sistema de gestión de tareas y seguimiento del trabajo. Se emplea para organizar el desarrollo, registrar incidencias y planificar el avance del proyecto.
 
-## 4. Configuración del entorno local de desarrollo
+## 5. Configuración del entorno local de desarrollo
 
 Para preparar el entorno local de desarrollo, sigue estos pasos:
 
@@ -57,37 +74,38 @@ Para preparar el entorno local de desarrollo, sigue estos pasos:
 
 2. **Instalación de Git**  
    Necesitarás Git como sistema de control de versiones.
-    * En sistemas Ubuntu o basados en Debian: `sudo apt-get install git`.
-    * En Windows: `winget install --id Git.Git -i --source winget`.
+    - En sistemas Ubuntu o basados en Debian: `sudo apt-get install git`.
+    - En Windows: `winget install --id Git.Git -i --source winget`.
 
 3. **Clonado del repositorio**  
    Clona el repositorio del proyecto Pet Store en tu equipo local ejecutando `git clone [repository-url]` desde el directorio que prefieras. Este paso crea una copia completa del proyecto y su historial.
 
 4. **Compilación inicial del proyecto**  
    Una vez clonado el repositorio, verifica que el proyecto compila correctamente.
-    * En Linux o macOS: `./gradlew build`.
-    * En Windows: `gradlew.bat build`.
+    - En Linux o macOS: `./gradlew build`.
+    - En Windows: `gradlew.bat build`.
 
    Durante la primera ejecución se descargarán las dependencias necesarias. Una compilación exitosa confirma que el entorno Java está correctamente configurado.
 
 5. **Importación en el entorno de desarrollo**  
    El IDE recomendado es [IntelliJ IDEA](https://www.jetbrains.com/idea/download/?section=windows). Importa el proyecto como un proyecto Gradle:
-   * Abre IntelliJ IDEA y selecciona **File → Open**.
-   * Navega hasta el directorio del proyecto y selecciónalo.
-   * IntelliJ detectará automáticamente que es un proyecto Gradle y lo importará.
-   * Tras la importación, comprueba que todos los módulos se reconocen correctamente y que no hay errores de configuración.
+   - Abre IntelliJ IDEA y selecciona **File → Open**.
+   - Navega hasta el directorio del proyecto y selecciónalo.
+   - IntelliJ detectará automáticamente que es un proyecto Gradle y lo importará.
+   - Tras la importación, comprueba que todos los módulos se reconocen correctamente y que no hay errores de configuración.
 
 Con esto ya es suficiente para empezar a trabajar en el proyecto. Si, además, se desea ejecutarlo de forma local, será necesario seguir las siguientes instrucciones.
 
-### 4.1. MySQL
+### 5.1. MySQL
 
 Al ejecutar la aplicación en local se utilizará una base de datos MySQL para almacenar los datos de forma persistente, tal y como ocurriría en una ejecución real.
 
 Este proyecto está configurado para funcionar con MySQL 9+. A continuación se explicará cómo instalar MySQL utilizando el gestor de paquetes del sistema y utilizando Docker, para así poder aplicar el método más adecuado en cada situación.
 
-#### 4.1.1. Instalación con gestor de paquetes
+#### 5.1.1. Instalación con gestor de paquetes
 
 **Ubuntu/Debian:**
+
 ```bash
 sudo apt install mysql-server
 ```
@@ -99,6 +117,7 @@ sudo apt-cache search mysql-server
 ```
 
 **macOS:**
+
 ```bash
 brew install mysql
 ```
@@ -109,22 +128,25 @@ Descarga el instalador desde el [sitio web oficial de MySQL](https://dev.mysql.c
 Una vez instalado MySQL, es necesario importar la base de datos. En el directorio `additional-material/db` del proyecto están almacenados los scripts de creación de la base de datos. El script `petstore-mysql.full.sql` contiene la creación completa de la base de datos, incluyendo la creación del esquema y del usuario usado por la aplicación.
 
 En sistemas Ubuntu, se puede realizar la importación desde la raíz del proyecto con el siguiente comando:
+
 ```bash
 mysql -u root -p < additional-material/db/petstore-mysql.full.sql
 ```
 
 Dependiendo de la versión de Ubuntu, en lugar de este comando, puede ser necesario ejecutar:
+
 ```bash
 sudo mysql < additional-material/db/petstore-mysql.full.sql
 ```
 
-#### 4.1.2. Instalación con Docker
+#### 5.1.2. Instalación con Docker
 
 En caso de que no se disponga de una versión 9+ de MySQL para instalar, que ya se tenga una versión instalada o que se prefiera no instalarla directamente en el equipo, se puede utilizar la instalación con Docker.
 
 En primer lugar, es necesario instalar Docker siguiendo los pasos del [manual oficial](https://docs.docker.com/engine/install/).
 
 Una vez instalado, se puede ejecutar un contenedor con MySQL 9 utilizando el siguiente comando desde el directorio raíz del proyecto:
+
 ```bash
 docker run -d --name petstore-mysql \
   -e MYSQL_ROOT_PASSWORD=petstorepass \
@@ -140,36 +162,40 @@ Este contenedor almacenará la base de datos en el directorio `mysql` del proyec
 
 El ciclo de vida del contenedor se puede controlar con los siguientes comandos:
 
-* **Iniciar el contenedor** (necesario al reiniciar el equipo):
+- **Iniciar el contenedor** (necesario al reiniciar el equipo):
+  
   ```bash
   docker start petstore-mysql
   ```
 
-* **Detener el contenedor**:
+- **Detener el contenedor**:
+
   ```bash
   docker stop petstore-mysql
   ```
 
-* **Acceder a MySQL como root** (password: `petstorepass`):
+- **Acceder a MySQL como root** (password: `petstorepass`):
+
   ```bash
   docker exec -it petstore-mysql mysql -uroot -p
   ```
 
-* **Acceder a MySQL como `petstore`** (usuario utilizado por la aplicación; password `petstore`):
+- **Acceder a MySQL como `petstore`** (usuario utilizado por la aplicación; password `petstore`):
+
   ```bash
   docker exec -it petstore-mysql mysql -upetstore -p
   ```
 
-### 4.2. WildFly
+### 5.2. WildFly
 
 El proyecto está configurado y preparado para ser ejecutado en un servidor WildFly con soporte para Jakarta EE 10. Se recomienda utilizar [WildFly 38.0.1.Final](https://www.wildfly.org/downloads/).
 
 Al desplegarse, la aplicación estará disponible en:
 
-* **Web:** `http://localhost:8080/pet-store/jsf/`
-* **REST:** `http://localhost:8080/pet-store/rest/`
+- **Web:** `http://localhost:8080/pet-store/jsf/`
+- **REST:** `http://localhost:8080/pet-store/rest/`
 
-#### 4.2.1. Ejecución en un WildFly local
+#### 5.2.1. Ejecución en un WildFly local
 
 La ejecución del proyecto en un WildFly local requiere la instalación del propio servidor, de un SGBD MySQL y la configuración del servidor WildFly.
 
@@ -185,12 +211,14 @@ Para configurar la seguridad, sigue estos pasos:
 1. **Arrancar el servidor WildFly:**  
    Abre un terminal, navega al directorio de WildFly y arranca el servidor con el perfil por defecto:
 
-    * **Linux/macOS:**
+    - **Linux/macOS:**
+
       ```bash
       bin/standalone.sh
       ```
 
-    * **Windows:**
+    - **Windows:**
+
       ```cmd
       bin\standalone.bat
       ```
@@ -202,18 +230,21 @@ Para configurar la seguridad, sigue estos pasos:
 
    Abre una nueva terminal, navega al directorio donde se haya descargado el script y ejecuta el siguiente comando, reemplazando `WILDFLY_HOME` con la ruta a tu instalación de WildFly:
 
-    * **Linux/macOS:**
+    - **Linux/macOS:**
+
       ```bash
       WILDFLY_HOME/bin/jboss-cli.sh --connect --file=additional-material/wildfly/configure-elytron.cli
       ```
 
-    * **Windows:**
+    - **Windows:**
+
       ```cmd
       WILDFLY_HOME\bin\jboss-cli.bat --connect --file=additional-material\wildfly\configure-elytron.cli
       ```
 
    Al finalizar la ejecución del script, la salida debería ser similar a la siguiente:
-   ```
+
+   ```text
    The batch executed successfully
    process-state: reload-required
    ```
@@ -221,12 +252,14 @@ Para configurar la seguridad, sigue estos pasos:
 3. **Recargar la configuración:**  
    Una vez ejecutado el script, es necesario recargar la configuración del servidor para que los cambios entren en vigor:
 
-    * **Linux/macOS:**
+    - **Linux/macOS:**
+
       ```bash
       WILDFLY_HOME/bin/jboss-cli.sh --connect --command=reload
       ```
 
-    * **Windows:**
+    - **Windows:**
+
       ```cmd
       WILDFLY_HOME\bin\jboss-cli.bat --connect --command=reload
       ```
@@ -235,12 +268,14 @@ Con esto ya estaría configurado el WildFly local.
 
 A partir de este punto, en ejecuciones posteriores, bastará con arrancar el servidor invocando el siguiente comando desde el directorio de instalación de WildFly:
 
-* **Linux/macOS:**
+- **Linux/macOS:**
+
   ```bash
   bin/standalone.sh
   ```
 
-* **Windows:**
+- **Windows:**
+
   ```cmd
   bin\standalone.bat
   ```
@@ -251,23 +286,26 @@ Una vez arrancado el servidor, se puede desplegar el fichero WAR o EAR generado 
 
 **Opción B:** Acceder a la interfaz de gestión del servidor, que debería estar disponible en `http://localhost:9990`, e ir al panel "Deployments". En este panel se tendrá la posibilidad de desplegar el fichero. Para poder realizar esta opción, es necesario añadir un usuario administrador al servidor, para lo cual se debe invocar el siguiente comando desde el directorio de WildFly:
 
-* **Linux/macOS:**
+- **Linux/macOS:**
+
   ```bash
   bin/add-user.sh
   ```
 
-* **Windows:**
+- **Windows:**
+
   ```cmd
   bin\add-user.bat
   ```
 
-#### 4.2.2. Ejecución en un WildFly con IntelliJ
+#### 5.2.2. Ejecución en un WildFly con IntelliJ
 
 IntelliJ IDEA permite ejecutar y depurar la aplicación directamente en un servidor WildFly local. Esta opción facilita el desarrollo al permitir despliegues rápidos y depuración integrada.
 
 **Requisitos previos:**
-* Haber instalado y configurado WildFly como se describió en el [apartado 4.2.1](#421-ejecución-en-un-wildfly-local).
-* Haber importado el proyecto en IntelliJ IDEA.
+
+- Haber instalado y configurado WildFly como se describió en el [apartado 4.2.1](#421-ejecución-en-un-wildfly-local).
+- Haber importado el proyecto en IntelliJ IDEA.
 
 **Configuración de Run/Debug:**
 
@@ -283,23 +321,25 @@ IntelliJ IDEA permite ejecutar y depurar la aplicación directamente en un servi
 
 Con esta configuración, IntelliJ se encargará de arrancar WildFly, desplegar la aplicación y conectar el depurador automáticamente.
 
-#### 4.2.3. Definición de la propiedad jboss.home
+#### 5.2.3. Definición de la propiedad jboss.home
 
 La propiedad `jboss.home` de Gradle debe apuntar al directorio de instalación de WildFly. Esta propiedad es necesaria para la ejecución de los tests de integración.
 
 Se puede definir de dos formas:
 
 **Opción A:** En el fichero `gradle.properties` del proyecto:
+
 ```properties
 jboss.home=/ruta/a/wildfly
 ```
 
 **Opción B:** Por línea de comandos al ejecutar Gradle:
+
 ```bash
 ./gradlew test -Pjboss.home=/ruta/a/wildfly
 ```
 
-## Flujo de trabajo con control de versiones (Git)
+## 6. Flujo de trabajo con control de versiones (Git)
 
 El proyecto Pet Store sigue un modelo de ramificación Git diseñado para dar soporte a múltiples versiones en paralelo, manteniendo la estabilidad del código mientras se permite el desarrollo continuo.
 
@@ -314,8 +354,8 @@ Al trabajar en una tarea específica, se crean ramas temporales:
 - **Ramas `feature/<name>`**: Para desarrollar nuevas funcionalidades en la versión activa. Estas ramas siempre parten de `main`. El nombre debe ser descriptivo del trabajo a realizar, por ejemplo: `feature/add-pet-vaccination-records`.
 
 - **Ramas `fix/<name>`**: Para corregir errores. Dependiendo del alcance de la corrección:
-    - Si el error solo afecta a la versión activa, la rama parte de `main`
-    - Si el error afecta a versiones en mantenimiento, la rama parte de la correspondiente `release/vX` y puede necesitarse aplicar el fix a múltiples ramas
+  - Si el error solo afecta a la versión activa, la rama parte de `main`
+  - Si el error afecta a versiones en mantenimiento, la rama parte de la correspondiente `release/vX` y puede necesitarse aplicar el fix a múltiples ramas
 
 **Ningún commit debe permanecer en una rama temporal por más de una semana.** Si transcurre este periodo sin completar el trabajo, se debe proceder a hacer merge a la rama correspondiente de aquellos aspectos que estén finalizados y funcionando correctamente. Esto evita que las ramas divergan excesivamente y facilita la integración continua, incluso cuando las tareas complejas requieren más tiempo del previsto.
 
@@ -327,11 +367,12 @@ Una vez completado el trabajo y verificado que todas las pruebas pasen localment
 
 Cuando se publica una nueva versión mayor, se crea una nueva rama `release/vX` desde `main`, se etiqueta el commit inicial con la versión correspondiente (por ejemplo, `X.0.0`), y `main` continúa con el desarrollo de la siguiente versión mayor.
 
-### Integración continua y manejo de construcciones fallidas
+### 6.1. Integración continua y manejo de construcciones fallidas
 
 Todas las ramas del proyecto están integradas con el servidor de integración continua, que ejecuta automáticamente la suite completa de pruebas tras cada push. **Todos los commits deben ser estables**, independientemente de la rama en la que se realicen: el código debe compilar correctamente, pasar todas las pruebas y poder desplegarse sin errores.
 
 **Si una construcción falla en cualquier rama**, es necesario revertir inmediatamente el repositorio a un estado estable. La forma más directa de hacerlo es forzar que la rama remota retroceda al commit anterior al problemático:
+
 ```bash
 # Para la rama main
 git push origin +HEAD^:main
@@ -346,15 +387,17 @@ git push origin +HEAD^:feature/nombre-rama
 Este comando sitúa la rama remota en el commit anterior a `HEAD`, que es el commit que causó el fallo. El commit problemático seguirá existiendo localmente, permitiendo corregir los errores y posteriormente realizar un `git commit --amend` para enmendarlo antes de volver a hacer push.
 
 Si se prefiere descartar el commit local pero conservar los cambios en los archivos de trabajo, puede utilizarse:
+
 ```bash
 git reset --mixed HEAD^
 ```
 
-### Sincronización con el repositorio remoto
+### 6.2. Sincronización con el repositorio remoto
 
 Cuando el repositorio remoto contiene commits nuevos que no están presentes localmente, Git impedirá hacer push directamente. En estos casos, es necesario traer los cambios remotos antes de poder subir los propios.
 
 Para evitar commits de merge innecesarios, se debe utilizar rebase al hacer pull:
+
 ```bash
 git pull --rebase
 ```
@@ -362,21 +405,23 @@ git pull --rebase
 Este comando inicia un proceso de rebase que reaplica los commits locales sobre el último commit remoto, manteniendo un historial lineal y limpio.
 
 **Configuración recomendada**: Para que este comportamiento sea el predeterminado en el proyecto, se puede configurar Git para que siempre use rebase al hacer pull:
+
 ```bash
 git config pull.rebase true
 ```
 
 Con esta configuración, ya no será necesario especificar `--rebase` en cada pull.
 
-### Verificación antes de hacer pull
+### 6.3. Verificación antes de hacer pull
 
 Antes de traer cambios del repositorio remoto, conviene verificar el estado del servidor de integración continua. **Si hay una construcción en ejecución, se debe esperar** a que finalice y confirmar que ha sido exitosa antes de hacer pull.
 
 En caso de que una construcción falle, es necesario esperar a que el repositorio vuelva a un estado estable (mediante el proceso descrito en la [sección 6.1](#integración-continua-y-manejo-de-construcciones-fallidas)) antes de sincronizar los cambios locales.
 
-### Trabajo en progreso y sincronización
+### 6.4. Trabajo en progreso y sincronización
 
 Cuando se está en medio de un desarrollo (con cambios sin commitear) y es necesario traer commits del repositorio remoto, puede utilizarse el área de stash para guardar temporalmente el trabajo en curso:
+
 ```bash
 git stash
 git pull --rebase
@@ -385,26 +430,29 @@ git stash pop
 
 El primer comando guarda los cambios actuales en un área temporal, el segundo trae los cambios remotos, y el tercero restaura el trabajo en progreso sobre los cambios recién descargados.
 
-### Resolución de conflictos durante rebase
+### 6.5. Resolución de conflictos durante rebase
 
 Durante un rebase pueden surgir conflictos que requieren resolución manual. Git pausará el proceso y marcará los archivos en conflicto. Tras editar estos archivos y resolver las diferencias:
+
 ```bash
 git add 
 git rebase --continue
 ```
 
 Si en algún momento se desea abortar el rebase y volver al estado anterior:
+
 ```bash
 git rebase --abort
 ```
 
-### Ciclo de vida de las ramas temporales
+### 6.6. Ciclo de vida de las ramas temporales
 
 Las ramas `feature/` y `fix/` permanecen activas en el repositorio incluso después de que su contenido haya sido fusionado mediante merge request. Esto permite continuar trabajando en la misma rama si surgen revisiones adicionales o trabajo relacionado.
 
 **Las ramas temporales deben ser eliminadas automáticamente tras un mes de inactividad** (sin recibir nuevos commits). Este proceso de limpieza ayuda a mantener el repositorio organizado y evita la acumulación de ramas obsoletas.
 
 Si se desea eliminar manualmente una rama que ya no se necesita, puede hacerse con:
+
 ```bash
 # Eliminar rama local
 git branch -d feature/nombre-rama
@@ -413,7 +461,7 @@ git branch -d feature/nombre-rama
 git push origin --delete feature/nombre-rama
 ```
 
-# 7. Tests
+## 7. Tests
 
 Antes de comenzar con los tests, conviene conocer el módulo `tests`. Su propósito es centralizar utilidades y herramientas que varios módulos necesitarán durante las pruebas. Cualquier clase o recurso que vaya a reutilizarse en diferentes partes del proyecto debería residir aquí.
 
@@ -421,7 +469,7 @@ Cada módulo tiene requisitos de testing distintos según su responsabilidad arq
 
 Como regla fundamental, los métodos de prueba deben redactarse de forma **simple y directa**, priorizando la claridad sobre cualquier otra consideración. Por este motivo, no se incluirá documentación Javadoc en los métodos de test (aunque las utilidades del módulo `tests` sí deben documentarse apropiadamente).
 
-## 7.1 Estrategia por módulo
+### 7.1. Estrategia por módulo
 
 La aproximación al testing cambia según el módulo:
 
@@ -431,7 +479,7 @@ La aproximación al testing cambia según el módulo:
 
 - **En el módulo `rest`**: se realizan tests de integración con Arquillian utilizando las extensiones Persistence y REST Client. Estos tests despliegan los recursos REST en un contenedor embebido y ejecutan peticiones HTTP reales, verificando el ciclo completo de petición-respuesta. Se valida que los recursos procesan correctamente las peticiones, transforman adecuadamente entre entidades del dominio y DTOs, devuelven los códigos de estado HTTP apropiados, y manejan correctamente la serialización, deserialización y mapeo de excepciones.
 
-## 7.2 Herramientas del módulo tests
+### 7.2. Herramientas del módulo tests
 
 Este módulo concentra cuatro categorías de utilidades:
 
@@ -443,15 +491,15 @@ Este módulo concentra cuatro categorías de utilidades:
 
 - **Matchers Hamcrest personalizados**: cada entidad debe contar con su matcher específico para comparaciones durante los tests. En lugar de depender de `equals`, estos matchers comparan basándose en propiedades clave de negocio, generando mensajes de error más descriptivos que indican exactamente qué propiedad difiere entre objetos esperados y reales. La clase base `IsEqualsToEntity` facilita la creación de nuevos matchers mediante comparación de propiedades.
 
-## 7.4 Objetivos de cobertura
+### 7.4. Objetivos de cobertura
 
 Se establece como meta una cobertura mínima del **70%** en líneas y ramas de código de lógica de negocio. Perseguir el 100% no siempre aporta valor real, pero sí es fundamental cubrir todos los caminos críticos y casos de error. Los informes JaCoCo generados pueden ayudar a identificar zonas sin cobertura que podrían requerir atención.
 
-## 7.5 Ejecución de tests
+### 7.5. Ejecución de tests
 
 Antes de ejecutar los tests, es necesario configurar la ubicación de WildFly siguiendo las instrucciones de la [sección 4.2.3](#423-definición-de-la-propiedad-jbosshome) sobre la definición de la propiedad `jboss.home`. Esta configuración es imprescindible para que los tests de integración con Arquillian funcionen correctamente.
 
-### 7.5.1 Ejecución de tests mediante Gradle
+#### 7.5.1. Ejecución de tests mediante Gradle
 
 Gradle localiza y ejecuta automáticamente todos los tests del proyecto. Para lanzar la suite completa basta con invocar:
 
@@ -473,29 +521,27 @@ Para obtener un informe de cobertura agregado que consolide los resultados de to
 ./gradlew jacocoAggregateReport
 ```
 
-### 7.5.2 Ejecución de tests desde IntelliJ IDEA
+#### 7.5.2. Ejecución de tests desde IntelliJ IDEA
 
 IntelliJ IDEA integra de forma nativa la ejecución de pruebas sin requerir configuración adicional. Una vez definida la propiedad `jboss.home`, la ejecución de los tests resulta sencilla e intuitiva.
 
 Es posible ejecutar un método de prueba individual haciendo clic derecho sobre él y seleccionando la opción `Run` correspondiente, ejecutar una clase completa de tests mediante el mismo procedimiento sobre la clase, o bien lanzar todas las pruebas de un paquete específico haciendo clic derecho sobre dicho paquete.
 
-## 7.6 Interpretación de resultados
+### 7.6. Interpretación de resultados
 
 Cada ejecución genera informes en dos formatos:
 
 - **Informes JUnit**: documentan el resultado de cada test individual. Gradle los almacena en `<module>/build/test-results/test` en formato XML y genera reportes HTML en `<module>/build/reports/tests/test/index.html` que pueden visualizarse directamente en cualquier navegador.
-
 - **Informes JaCoCo individuales**: cada módulo genera su propio informe de cobertura en `<module>/build/reports/jacoco/test/html/index.html`. Estos informes muestran qué líneas de código y bifurcaciones se han ejecutado durante las pruebas de ese módulo.
-
 - **Informe JaCoCo agregado**: al ejecutar la tarea `jacocoRootReport`, se genera un informe consolidado en `build/reports/jacoco/jacocoRootReport/html/index.html` que presenta la cobertura global del proyecto. Este informe es especialmente útil para obtener una visión completa del estado de las pruebas. La ruta exacta del informe se muestra en la consola al finalizar su generación.
 
 Cuando se ejecutan tests directamente desde IntelliJ IDEA, la información equivalente a los informes JUnit aparece inmediatamente en la vista de ejecución de tests del IDE, mostrando resultados en tiempo real con indicadores visuales de éxito o fallo.
 
-# 8. Guía de estilo
+## 8. Guía de estilo
 
 Mantener un estilo consistente en todo el proyecto mejora la legibilidad del código y reduce la carga cognitiva al moverse entre diferentes partes de la base de código. Esta sección establece las convenciones que deben seguirse durante el desarrollo.
 
-## 8.1 Código fuente
+### 8.1. Código fuente
 
 Para uniformizar el código fuente deben respetarse las siguientes normas:
 
@@ -507,7 +553,7 @@ Para uniformizar el código fuente deben respetarse las siguientes normas:
 - **Documentación**: todas las clases públicas deben incluir documentación Javadoc que describa su propósito y responsabilidades. Los métodos públicos con comportamiento no obvio deben incluir Javadoc describiendo parámetros, valores de retorno y excepciones lanzadas. Sin embargo, debe evitarse documentación redundante que meramente repita lo que el código expresa claramente. Por ejemplo, no escribir "Devuelve el nombre" para un método llamado `getName()`. Se recomienda verificar que la documentación es correcta utilizando el comando `gradle javadoc`, que generará la documentación en formato HTML y fallará si encuentra algún error.
 - **Capa REST**: al trabajar con recursos REST, deben seguirse los principios de diseño RESTful. Las rutas de los recursos deben usar nombres en plural para representar colecciones (por ejemplo, `/users`, `/pets`). Usar los métodos HTTP apropiados (GET para recuperación, POST para creación, PUT para actualizaciones, DELETE para eliminación), devolver códigos de estado HTTP significativos (200 OK, 201 Created, 400 Bad Request, 404 Not Found, 403 Forbidden, etc.), y diseñar rutas URL que representen jerarquías de recursos. Las respuestas de error deben incluir mensajes útiles en el cuerpo de la respuesta. Cuando se implementen paginaciones, los índices de página deben comenzar en 0 siguiendo la convención estándar de la mayoría de APIs REST.
 
-## 8.2 Mapeo entre entidades y DTOs
+### 8.2. Mapeo entre entidades y DTOs
 
 En el caso de utilizar DTOs para transferir datos entre capas, es importante que exista un mapeo claro entre las entidades y los DTOs. Para ello, se usará la siguiente convención:
 
@@ -517,7 +563,7 @@ El nombre de los DTOs será el mismo que el de la entidad correspondiente, pero 
 
 Las clases encargadas de realizar el mapeo entre entidades y DTOs se llamarán `<EntityName>Mapper`. Por ejemplo, la clase encargada de mapear entre la entidad `Story` y sus DTOs se llamará `StoryMapper`.
 
-## 8.3 Control de versiones
+### 8.3. Control de versiones
 
 El desarrollo en este proyecto se basa en el principio de integración continua y frecuente. Las siguientes pautas garantizan que el código compartido mantenga siempre un estado funcional:
 
@@ -528,21 +574,20 @@ El desarrollo en este proyecto se basa en el principio de integración continua 
 - Redacción en inglés.
 - Líneas limitadas a 80 caracteres.
 - Primera línea descriptiva del cambio:
-   - Si está relacionado con alguna tarea concreta, debe comenzar con el identificador de la tarea (p.ej. "tsk1: Add...").
-   - Si está relacionado con varias tareas, sus números se separarán con un guión (p.ej. "tsk1-2-13: Fix...").
-   - Debe estar redactada en **imperativo** (p.ej. *Add...*, *Improve...*, *Modify...*, etc.).
-   - No debe llevar punto final.
+  - Si está relacionado con alguna tarea concreta, debe comenzar con el identificador de la tarea (p.ej. "PET-1: Add...").
+  - Debe estar redactada en **imperativo** (p.ej. *Add...*, *Improve...*, *Modify...*, etc.).
+  - No debe llevar punto final.
 - Cuerpo del commit:
-   - Con una línea vacía de separación respecto a la primera línea.
-   - Debe escribirse un texto que explique claramente el trabajo realizado en el commit.
-   - Los párrafos deben finalizar con punto.
+  - Con una línea vacía de separación respecto a la primera línea.
+  - Debe escribirse un texto que explique claramente el trabajo realizado en el commit.
+  - Los párrafos deben finalizar con punto.
 
 **Frecuencia de commits**: los commits deben hacerse en pequeños pasos para que la frecuencia sea alta. Para ello es recomendable desarrollar de forma ordenada, atacando partes concretas. Se espera al menos 2-3 commits por desarrollador cada semana, distribuidos uniformemente a lo largo del periodo. Concentrar todos los commits al final de la semana perjudica la integración continua.
 
 **Frecuencia de push**: cada commit debe ir acompañado inmediatamente de su correspondiente push.
 
-## 8.4 Material adicional
+### 8.4. Material adicional
 
 El módulo `additional-material` agrupa recursos auxiliares necesarios para el despliegue y desarrollo que no forman parte de los artefactos desplegables. Su contenido requiere mantenimiento en los siguientes escenarios:
 
-**Modificaciones en el esquema de base de datos**: cualquier cambio en las entidades del módulo domain (creación, modificación o eliminación) obliga a actualizar el script SQL ubicado en el subdirectorio `db`. El fichero `petstore-mysql.sql` debe contener las sentencias necesarias para inicializar completamente el sistema: creación de la base de datos, definición de tablas, configuración del usuario de aplicación con sus permisos, e inserción de datos de prueba. Un administrador debería poder ejecutar únicamente este script contra un servidor MySQL limpio y tener la aplicación lista para usar inmediatamente.
+**Modificaciones en el esquema de base de datos**: cualquier cambio en las entidades del módulo domain (creación, modificación o eliminación) obliga a actualizar el script SQL ubicado en el subdirectorio `db`. El fichero `petstore-mysql.full.sql` debe contener las sentencias necesarias para inicializar completamente el sistema: creación de la base de datos, definición de tablas, configuración del usuario de aplicación con sus permisos, e inserción de datos de prueba. Un administrador debería poder ejecutar únicamente este script contra un servidor MySQL limpio y tener la aplicación lista para usar inmediatamente.
