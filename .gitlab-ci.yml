@@ -7,8 +7,6 @@ variables:
 
   # Nexus Configuration
   NEXUS_URL: "http://nexus.home.arpa:8081"
-  NEXUS_USER: "gitlab-ci"
-  NEXUS_PASSWORD: "gitlab-ci"
   GROUP_ID: "pablog"
   ARTIFACT_ID: "petstore"
   
