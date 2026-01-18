@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.bundling.War
+
 plugins {
     war
 }
@@ -15,4 +17,13 @@ dependencies {
     compileOnly(libs.jakarta.annotation.api)
     compileOnly(libs.jakarta.persistence.api)
     compileOnly(libs.jakarta.security.enterprise.api)
+}
+
+tasks.withType<War>().configureEach {
+    manifest {
+        attributes(
+            "Implementation-Title" to project.name,
+            "Implementation-Version" to project.version
+        )
+    }
 }
